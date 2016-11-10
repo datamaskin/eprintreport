@@ -20,6 +20,7 @@ gradle-app.setting
 # IntelliJ project files
 .idea
 *.iml
+EprintReport.ipr
 out
 gen### Grails template
 # .gitignore for Grails 1.2 and 1.3
