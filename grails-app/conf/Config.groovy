@@ -85,6 +85,13 @@ grails.hibernate.pass.readonly = false
 // configure passing read-only to OSIV session by default, requires "singleSession = false" OSIV mode
 grails.hibernate.osiv.readonly = false
 
+// configure reverse engineer tables in DEVL
+grails.plugin.reveng.includeTables = ['GW_RPTS', 'GW_RPTS_DEF', 'GW_RPTS_GTT', 'GW_RPTS_USER']
+//grails.plugin.reveng.includeTables = ['GW_RPTS']
+grails.plugin.reveng.packageName = 'edu.tamu.banner.eprint'
+grails.plugin.reveng.defaultSchema = 'GENERAL'
+grails.plugin.reveng.destDir = 'eprint_temp_reverse_engineer'
+
 environments {
     development {
         grails.logging.jul.usebridge = true
