@@ -57,6 +57,7 @@ gen### Grails template
 # "temporary" build files
 /target
 /eprint_temp_reverse_engineer
+/.ideaDataSources
 ### Eclipse template
 
 .metadata
