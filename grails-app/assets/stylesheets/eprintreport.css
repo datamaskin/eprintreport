@@ -1,0 +1,607 @@
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: small;
+}
+#header {
+    height: 75px;
+    padding-top: 0;
+}
+#logo {
+    float: left;
+    width: 18%;
+    text-align: center;
+}
+#schoollogo {
+    width: 18%;
+    float: right;
+    text-align: center;
+    overflow: hidden;
+}
+
+#pagehead {
+    height: 75px;
+    width: 63%;
+    float: left;
+}
+#pageheadblock {
+    float: left;
+    width: 100%;
+    padding-top: .25em;
+    height: 55px;
+}
+#pageheadblockleft {
+    float: left;
+    width: 70%;
+}
+#pageheadblockleft h1 {
+    position: relative;
+    left: 10px;
+    font-size: medium;
+    display: inline;
+}
+#pageheadblockright {
+    float: right;
+    position: relative;
+    width: 29%;
+    padding-left:  .2em;
+    padding-top:  .2em;
+    overflow: hidden;
+}
+#pageheadblockright h2 {
+    font-size:x-small;
+    margin-top: 0;
+    padding-top:  0;
+    margin-bottom: .3em;
+    padding-bottom:  0;
+}
+#helplinks {
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+    float: left;
+    font-size: x-small;
+}
+#helplinks ul {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    list-style-type: none;
+    list-style-image: none;
+    list-style-position: inside;
+}
+#helplinks li {
+    display: inline;
+}
+#helplinks a {
+    text-decoration: none;
+}
+#menulinks {
+    float: right;
+    font-size: x-small;
+}
+#menulinks ul {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+    list-style-type: none;
+    list-style-image: none;
+    list-style-position: inside;
+}
+#menulinks li {
+    display: inline;
+}
+#menulinks a {
+    text-decoration: none;
+}
+#loginbox {
+    margin-top: 1em;
+    margin-bottom: .5em;
+    margin-left: auto;
+    margin-right: auto;
+}
+#footer {
+    /*float: left;*/
+    float: right;
+    margin-top: 0;
+    width: 100%;
+}
+#poweredby {
+    float: left;
+    width: 100%;
+}
+#poweredby img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.inputform{
+    margin: auto auto auto auto;
+}
+.inputform th{
+}
+.accent {
+}
+#content{
+    float: left;
+    width: 100%;
+}
+.messages{
+    text-align: center;
+    width: 100%;
+}
+#errormessage{
+    font-style: italic;
+    font-weight: bold;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:  .5em;
+    margin-bottom: 5.5em;
+    width: 100%;
+}
+#repomessage{
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#repomessage img{
+    border: none;
+}
+#navbar {
+    margin-top: 1.3em;
+    padding-top: .2em;
+    padding-bottom: .3em;
+    padding-left: .2em;
+    float: left;
+    width: 100%;
+    margin-bottom: 1.3em;
+    font-weight: bold;
+    font-size: small;
+}
+#navbar a{
+    font-size: small;
+    text-decoration: none;
+}
+.reporttable{
+    padding-top: .5em;
+    width: 100%;
+    border-spacing: 0;
+}
+.reporttable td{
+    color: black;
+    border-right-width: 1px;
+    border-right-style: solid;
+    padding-left: .25em;
+    padding-top: .15em;
+    padding-bottom: .15em;
+}
+.reporttable img{
+    border: none;
+}
+.rowlight {
+}
+.rowdark {
+}
+.reportheader {
+}
+.reportheader th{
+    padding-bottom: .2em;
+    padding-left: .5em;
+    text-align: left;
+}
+.reportheader a{
+}
+.reportheadernarrow {
+    width: 5%;
+}
+.imagecol {
+    width: 20%;
+}
+#pagebar {
+    margin-top:  1.2em;
+    padding-top: .1em;
+    padding-bottom: .1em;
+    float: left;
+    width: 100%;
+}
+#pagebar select {
+    margin-top: .5em;
+    margin-left: -94px;
+}
+#pagebarback {
+    float:left;
+    width: 84px;
+    padding-left: 10px;
+}
+#pagebarback img {
+    border: none;
+}
+#pagebarjumpto {
+    text-align: center;
+}
+.bartextbox {
+    position: relative;
+    top: -.7em;
+    margin-left: -94px;
+}
+.bargobutton{
+}
+#pagebarnext {
+    margin-top: -2.1em;
+    width: 84px;
+    float: right;
+    padding-right: 10px;
+}
+#pagebarnextnopad {
+    width: 84px;
+    float: right;
+    padding-right: 10px;
+}
+#pagebarnextnopad img {
+    border: none;
+}
+
+#pagebarnext img {
+    border: none;
+}
+#sortkeynext {
+    margin-top: -2.8em;
+    width: 84px;
+    float: right;
+    padding-right: 10px;
+}
+#sortkeynext img {
+    border: none;
+}
+.textbox {
+    position: relative;
+    top: -1em;
+}
+.gobutton{
+    position: relative;
+    top: -.5em;
+}
+.bordertable {
+    margin-left: auto;
+    margin-right: auto;
+}
+.centertable {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sortkeytable {
+    width: 100%;
+}
+.sortkeytable td {
+    padding: .1em;
+}
+.sortkeytable p {
+    margin-right: auto;
+    margin-left: auto;
+}
+.sortkeytable input {
+    float: left;
+}
+#getreport {
+    width: 100%;
+    text-align: center;
+}
+#getreport img{
+    padding-right: .25em;
+    border: none;
+}
+.getreporterr {
+}
+
+/* deal with ai issue with ie */
+table{
+    text-align: left;
+}
+a {
+    color:  #000066;
+}
+
+
+/* Myeprint */
+/* Main Navigation */
+#menu {
+    float: left;
+    width: 100%;
+}
+#multi_line_menu  {
+    float: left;
+    width: 100%;
+}
+* html .negative_top_margin {
+    margin-top: -1.3em;
+}
+
+#menu ul {
+    float: left;
+    font: .9em verdana, Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding-left: 25px;
+    padding-top: 6px;
+    text-align: left;
+}
+#multi_line_menu ul {
+    float: left;
+    font: .9em verdana, Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding-left: 25px;
+    padding-top: 6px;
+    text-align: left;
+}
+#menu li {
+    float: left;
+    list-style: none;
+    margin: 0;
+    margin-right: 5px;
+    padding-top: 7px;
+    white-space: nowrap;
+}
+#multi_line_menu li {
+    float: left;
+    list-style: none;
+    margin: 0;
+    margin-right: 5px;
+    padding-top: 4px;
+    white-space: nowrap;
+}
+#menu li a {
+    margin-right: 0em;
+    padding: 0px 6px 0px 6px;
+    text-decoration: none;
+    font-weight: bold;
+    position: relative; /* IE bug fix */
+}
+#multi_line_menu li a {
+    border-bottom: none;
+    margin-right: 0em;
+    padding: 0px 6px 2px 6px;
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+}
+#menu li a:hover {
+    font-weight: bold;
+}
+#multi_line_menu li a:hover {
+    font-weight: bold;
+}
+/* #menu li a.last {
+border-right: solid 10px red;
+} */
+#menu li a.selected {
+    font-weight: bold;
+}
+#multi_line_menu li a.selected {
+    border-bottom: none;
+    font-weight: bold;
+}
+#menu li a.selected:hover {
+}
+#multi_line_menu li a.selected:hover {
+}
+#submenu {
+    float: left;
+    width: 100%;
+}
+#submenu ul {
+    height: 1em;
+    list-style: none;
+    padding: 0;
+    padding-left: 26px;
+    margin: 0;
+}
+#submenu li {
+    display: inline;
+}
+#submenu li a {
+    float: left;
+    padding: 3px 7px;
+    margin: 0;
+    font:  .8em verdana, Arial, Helvetica, sans-serif;
+    text-decoration: none;
+}
+#submenu li a:hover {
+    font-weight: bold;
+}
+#submenu li a.last {
+}
+#submenu li a.selected {
+    font-weight: bold;
+}
+
+
+
+/* Myeprint Groups dividing line */
+div.hr {
+    height: 10px;
+}
+
+div.hr hr {
+    display: none;
+}
+
+
+
+/* Myeprint listbox style*/
+div.list {
+    float: left;
+    width: 300px;
+    margin: 15px 10px 5px 0px;
+}
+div.rsslist {
+    float: none;
+    width: 200px;
+    margin: 15px 140px 5px 0px;
+}
+
+div.crggroupname {
+    float: left;
+    width: 100px;
+    margin: .2px 10px 5px 0px;
+}
+
+
+.list select {
+}
+
+.list p {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    text-align: Left;
+    font-weight: bold;
+    font-size: .9em;
+    padding: 0px;
+    margin: 0px 0 0 0;
+}
+
+textarea#emptysearch {
+}
+
+textarea#emptygrouprpt {
+}
+
+textarea#emptygrouporder {
+}
+
+textarea#emptyreportlist {
+}
+
+select#emptycopyfrom {
+}
+
+select#emptyselectgroup {
+}
+
+select#emptysearchreport {
+}
+select#emptysearchreportkey {
+}
+
+input#emptygroupname {
+}
+
+img#rightleft {
+    padding: 0px 0px 10px 0px;
+    margin: 10px 10px 0px 10px;
+    width:35px;
+    height:35px;
+}
+
+img#upbttn{
+    padding: 0px 0px 10px 0px;
+    margin: 0px 10px 10px 10px;
+    width:35px;
+    height:35px;
+}
+img#reordergrpupbttn{
+    padding: 5px 0px 0px 0px;
+    margin: 30px 10px 0px 10px;
+    width:35px;
+    height:35px;
+}
+
+img#downbttn {
+    padding: 10px 0px 0px 0px;
+    margin: 10px 10px 0px 10px;
+    width:35px;
+    height:35px;
+}
+
+/* IE 5/6 border erase bug */
+* html #gallery {
+    width: 100%;
+}
+
+/* IE 5 placement bug */
+* html #gallery img {
+    width: 100%;
+}
+#groupnames, #search_settings {
+    float: left;
+    width: 100%;
+    margin-top: 1em;
+}
+#groupnames img {
+    border: none;
+}
+
+#list_length {
+    float: left;
+    width: 100%;
+    margin-top: 3em;
+    margin-bottom: 3em;
+}
+#reportnames, #mod_group_name {
+    width: 100%;
+    float: left;
+}
+#groupnames, #reportnames, #mod_group_name, #search_settings, #list_length {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size:1.0em;
+    text-align: Center;
+    line-height:150%;
+    padding-top:0px;
+    padding-bottom: 0;
+    margin-left: 0px;
+}
+
+#save_cancel_buttons, #save_button {
+    text-align: center;
+    width: 100%;
+    float: left;
+    margin-top: .7em;
+    margin-bottom: 1.3em;
+}
+#save_cancel_buttons img{
+    border: none;
+}
+* html #save_cancel_buttons {
+    margin-bottom: -1.3em;
+}
+* html #save_button {
+    margin-bottom: -1.3em;
+}
+#divline {
+    text-align: center;
+    width: 100%;
+    float: left;
+    margin-top: .7em;
+}
+* html .left_margin_10 {
+    margin-left: 10px;
+}
+#rpttable {
+    float: left;
+    width: 100%;
+    margin-top: 1em;
+}
+#deletegroup img {
+    border: none;
+}
+
+.myeprintlabels {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: large;
+}
+
+.myeprintblacklabels {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    font-size: large;
+}
+.myeprintmessage {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-style: italic;
+    font-size: large;
+}
+.aheadertext {
+    font-weight: bold;
+    font-size: large;
+}
+.errortext {
+}
