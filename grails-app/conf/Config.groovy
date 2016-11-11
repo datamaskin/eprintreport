@@ -91,12 +91,12 @@ grails.hibernate.osiv.readonly = false
 // configure reverse engineer tables in DEVL
 grails.plugin.reveng.includeTables = ['GW_RPTS', 'GW_RPTS_DEF', 'GW_RPTS_GTT', 'GW_RPTS_USER']
 //grails.plugin.reveng.includeTables = ['GW_RPTS']
-grails.plugin.reveng.packageName = 'edu.tamu.banner.eprint'
+grails.plugin.reveng.packageName = 'edu.tamu.banner.eprintreport'
 grails.plugin.reveng.defaultSchema = 'ERPTS'
 grails.plugin.reveng.destDir = 'eprint_temp_reverse_engineer'
 
 // asset plugin stuff
-grails.assets.excludes = ["**/main.css"]
+grails.assets.excludes = ["stylesheets/main.css"]
 
 environments {
     development {
