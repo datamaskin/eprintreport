@@ -8,6 +8,11 @@
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
+		<div id="header">
+			<div id="logo">
+				<asset:image src="bannereprint.gif" />
+			</div>
+		</div>
 		<a href="#list-gwRptsDef" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
 		<div class="nav" role="navigation">
 			<ul>
@@ -20,7 +25,7 @@
 			<g:if test="${flash.message}">
 				<div class="message" role="status">${flash.message}</div>
 			</g:if>
-			<table class="reporttable">
+			<table class="reporttable" >
 			<thead>
 					<tr>
 					
