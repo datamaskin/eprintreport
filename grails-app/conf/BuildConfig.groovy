@@ -5,6 +5,7 @@ grails.project.test.reports.dir = "target/test-reports"
 grails.project.work.dir = "target/work"
 grails.project.target.level = 1.6
 grails.project.source.level = 1.6
+
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
 grails.project.fork = [
@@ -69,6 +70,9 @@ grails.project.dependency.resolution = {
 
         // The DB rev eng tool
         compile "org.grails.plugins:db-reverse-engineer:4.0.0"
+
+        // REST builder
+        compile ':rest-client-builder:2.1.1'
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.9.0"
