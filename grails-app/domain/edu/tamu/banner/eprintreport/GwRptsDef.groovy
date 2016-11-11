@@ -16,12 +16,12 @@ class GwRptsDef {
 	}
 
 	static constraints = {
-		gwRptsDefObjectName maxSize: 120
-		gwRptsDefObjectDesc nullable: true, maxSize: 300
-		gwRptsDefMaintainedDept nullable: true, maxSize: 30
-		gwRptsDefMaintainedColl nullable: true, maxSize: 2
+		gwRptsDefObjectName maxSize: 480
+		gwRptsDefObjectDesc nullable: true, maxSize: 1200
+		gwRptsDefMaintainedDept nullable: true, maxSize: 120
+		gwRptsDefMaintainedColl nullable: true, maxSize: 8
 		gwRptsDefRetentionDays nullable: true
-		gwRptsDefUserid nullable: true, maxSize: 30
+		gwRptsDefUserid nullable: true, maxSize: 120
 		gwRptsDefActivityDate nullable: true
 	}
 }

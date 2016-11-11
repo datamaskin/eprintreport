@@ -33,11 +33,11 @@ class GwRptsUser implements Serializable {
 	}
 
 	static constraints = {
-		gwRptsUserUsername maxSize: 30
-		gwRptsUserObjectAccessed maxSize: 120
+		gwRptsUserUsername maxSize: 120
+		gwRptsUserObjectAccessed maxSize: 480
 		gwRptsUserPidm nullable: true
 		gwRptsUserTimesAccessed nullable: true
-		gwRptsUserIp nullable: true, maxSize: 45
+		gwRptsUserIp nullable: true, maxSize: 180
 		gwRptsUserActivityDate nullable: true
 	}
 }
