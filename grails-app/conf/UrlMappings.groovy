@@ -7,7 +7,9 @@ class UrlMappings {
             }
         }
 
-        "/"(view:"/index")
+        "/EprintReport"(resources: "gwRptsDef")
+//        "/"(view:"index")
+        "/"(controller: "gwRptsDef", action: "index")
         "500"(view:'/error')
 	}
 }

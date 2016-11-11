@@ -2,10 +2,13 @@
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
 
-// grails.config.locations = [ "classpath:${appName}-config.properties",
-//                             "classpath:${appName}-config.groovy",
-//                             "file:${userHome}/.grails/${appName}-config.properties",
-//                             "file:${userHome}/.grails/${appName}-config.groovy"]
+ grails.config.locations = [ /*"classpath:${appName}-config.properties",
+                             "classpath:${appName}-config.groovy",
+                             "file:${userHome}/.grails/${appName}-config.properties",
+                             "file:${userHome}/.grails/${appName}-config.groovy"*/
+                             "file:${userHome}/.grails/${appName}_configuration.groovy",
+                             "file:${userHome}/.grails/${appName}_datasource.groovy"
+ ]
 
 // if (System.properties["${appName}.config.location"]) {
 //    grails.config.locations << "file:" + System.properties["${appName}.config.location"]
@@ -85,6 +88,13 @@ grails.hibernate.pass.readonly = false
 // configure passing read-only to OSIV session by default, requires "singleSession = false" OSIV mode
 grails.hibernate.osiv.readonly = false
 
+// configure reverse engineer tables in DEVL
+grails.plugin.reveng.includeTables = ['GW_RPTS', 'GW_RPTS_DEF', 'GW_RPTS_GTT', 'GW_RPTS_USER']
+//grails.plugin.reveng.includeTables = ['GW_RPTS']
+grails.plugin.reveng.packageName = 'edu.tamu.banner.eprint'
+grails.plugin.reveng.defaultSchema = 'GENERAL'
+grails.plugin.reveng.destDir = 'eprint_temp_reverse_engineer'
+
 environments {
     development {
         grails.logging.jul.usebridge = true
@@ -102,6 +112,8 @@ log4j.main = {
     //appenders {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
+    debug 'grails.plugin.databasemigration', 'liquibase'
+    debug 'grails.plugin.reveng'
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
