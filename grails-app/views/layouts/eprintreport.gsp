@@ -10,11 +10,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title><g:layoutTitle default="Grails"/></title>
+    <title><g:layoutTitle default="ePrint"/></title>
     <asset:stylesheet src="application.css"/>
     <asset:javascript src="application.js"/>
-    %{--<link rel="stylesheet" href="${resource(dir: 'css', file: 'styles.css')}" type="text/css">--}%
-    <link rel="stylesheet" href="${resource(dir: 'stylesheets', file: 'eprintreport.css')}" type="text/css">
+    <asset:stylesheet src="eprintreport.css" />
+    %{--<link rel="stylesheet" href="${resource(dir: 'css', file: 'eprintreport.css')}" type="text/css">--}%
     <g:layoutHead/>
 </head>
 <body>
