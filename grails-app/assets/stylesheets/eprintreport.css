@@ -10,6 +10,8 @@ body {
 #header {
     height: 75px;
     padding-top: 0;
+    background: #500000;
+    border-bottom: 5px solid #500000;
 }
 #logo {
     float: left;
