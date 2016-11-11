@@ -12,6 +12,16 @@
 			<div id="logo">
 				<asset:image src="bannereprint.gif" />
 			</div>
+			<div id="pagehead">
+				<div id="pageheadblock">
+					<div id="pageheadblockleft">
+						<h1>Select Report from Repository Student Development</h1>
+					</div>
+					<div id="pageheadblockright">
+						<h2>Student Development Repository</h2>
+					</div>
+				</div>
+			</div>
 		</div>
 		<a href="#list-gwRptsDef" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
 		<div class="nav" role="navigation">
