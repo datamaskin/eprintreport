@@ -6,6 +6,8 @@
 		<meta name="layout" content="eprintreport">
 		<g:set var="entityName" value="${message(code: 'gwRptsDef.label', default: 'GwRptsDef')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
+		<asset:javascript src="fp.js"/>
+		<asset:stylesheet src="fp.css"/>
 	</head>
 	<body>
 		<div id="header">
@@ -15,10 +17,11 @@
 			<div id="pagehead">
 				<div id="pageheadblock">
 					<div id="pageheadblockleft">
-						<h1>Select Report from Repository Student Development</h1>
+						<h2>Select Report from Repository Student Development</h2>
 					</div>
 					<div id="pageheadblockright">
 						<h2>Student Development Repository</h2>
+						<h2>${fieldValue(bean: GwRptsDef.findByGwRptsDefUseridIsNotNull(), field: "gwRptsDefUserid")}</h2>
 					</div>
 				</div>
 			</div>
@@ -42,17 +45,19 @@
 			<thead>
 					<tr>
 					
-						<g:sortableColumn property="gwRptsDefObjectName" title="${message(code: 'gwRptsDef.gwRptsDefObjectName.label', default: 'Gw Rpts Def Object Name')}" />
+						<g:sortableColumn property="gwRptsDefObjectName" title="${message(code: 'gwRptsDef.gwRptsDefObjectName.label', default: 'Report name')}" params="${filterParams}" />
 					
-						<g:sortableColumn property="gwRptsDefObjectDesc" title="${message(code: 'gwRptsDef.gwRptsDefObjectDesc.label', default: 'Gw Rpts Def Object Desc')}" />
+						<g:sortableColumn property="gwRptsDefObjectDesc" title="${message(code: 'gwRptsDef.gwRptsDefObjectDesc.label', default: 'Description')}" params="${filterParams}" />
+
+						<g:sortableColumn property="gwRptsLastAccessed" title="${message(code: 'gwRptsDef.gwRptsDefActivityDate.label', default: 'Latest')}" params="${filterParams}" />
 					
-						<g:sortableColumn property="gwRptsDefMaintainedDept" title="${message(code: 'gwRptsDef.gwRptsDefMaintainedDept.label', default: 'Gw Rpts Def Maintained Dept')}" />
+						%{--<g:sortableColumn property="gwRptsDefMaintainedDept" title="${message(code: 'gwRptsDef.gwRptsDefMaintainedDept.label', default: 'Gw Rpts Def Maintained Dept')}" />--}%
 					
-						<g:sortableColumn property="gwRptsDefMaintainedColl" title="${message(code: 'gwRptsDef.gwRptsDefMaintainedColl.label', default: 'Gw Rpts Def Maintained Coll')}" />
+						%{--<g:sortableColumn property="gwRptsDefMaintainedColl" title="${message(code: 'gwRptsDef.gwRptsDefMaintainedColl.label', default: 'Gw Rpts Def Maintained Coll')}" />--}%
 					
-						<g:sortableColumn property="gwRptsDefRetentionDays" title="${message(code: 'gwRptsDef.gwRptsDefRetentionDays.label', default: 'Gw Rpts Def Retention Days')}" />
+						%{--<g:sortableColumn property="gwRptsDefRetentionDays" title="${message(code: 'gwRptsDef.gwRptsDefRetentionDays.label', default: 'Gw Rpts Def Retention Days')}" />--}%
 					
-						<g:sortableColumn property="gwRptsDefUserid" title="${message(code: 'gwRptsDef.gwRptsDefUserid.label', default: 'Gw Rpts Def Userid')}" />
+						%{--<g:sortableColumn property="gwRptsDefUserid" title="${message(code: 'gwRptsDef.gwRptsDefUserid.label', default: 'Gw Rpts Def Userid')}" />--}%
 					
 					</tr>
 				</thead>
@@ -63,14 +68,16 @@
 						<td><g:link action="show" id="${gwRptsDefInstance.id}">${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefObjectName")}</g:link></td>
 					
 						<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefObjectDesc")}</td>
+
+						<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefActivityDate")}</td>
 					
-						<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefMaintainedDept")}</td>
+						%{--<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefMaintainedDept")}</td>--}%
 					
-						<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefMaintainedColl")}</td>
+						%{--<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefMaintainedColl")}</td>--}%
 					
-						<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefRetentionDays")}</td>
+						%{--<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefRetentionDays")}</td>--}%
 					
-						<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefUserid")}</td>
+						%{--<td>${fieldValue(bean: gwRptsDefInstance, field: "gwRptsDefUserid")}</td>--}%
 					
 					</tr>
 				</g:each>
@@ -78,7 +85,21 @@
 			</table>
 			<div class="pagination">
 				<g:paginate total="${gwRptsDefInstanceCount ?: 0}" />
+				<filterpane:filterButton text="Report Filter" />
 			</div>
 		</div>
+	<filterpane:filterPane domain="edu.tamu.banner.eprintreport.GwRptsDef"
+						   associatedProperties="GwRptsDef.gwRptsDefObjectName,GwRptsDef.gwRptsDefObjectDesc,GwRptsDef.gwRptsDefActivityDate"
+						   excludeProperties="gwRptsDefObjectDesc,gwRptsDefActivityDate,gwRptsDefMaintainedDept,gwRptsDefMaintainedColl,gwRptsDefRetentionDays,gwRptsDefUserid"
+						   filterPropertyValues="${
+							   ['gwRptsDefObjectName':
+										[values: edu.tamu.banner.eprintreport.GwRptsDef.list().gwRptsDefObjectName]
+							   ]}"
+						   titleKey="fp.tag.filterPane.titleText"
+						   dialog="true"
+						   visible="n"
+						   showSortPanel="n"
+						   showTitle="n"
+						   fullAssociationPathFieldNames="false"/>
 	</body>
 </html>
