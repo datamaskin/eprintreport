@@ -4,7 +4,7 @@
 
 <div class="fieldcontain ${hasErrors(bean: gwRptsDefInstance, field: 'gwRptsDefObjectName', 'error')} required">
 	<label for="gwRptsDefObjectName">
-		<g:message code="gwRptsDef.gwRptsDefObjectName.label" default="Gw Rpts Def Object Name" />
+		<g:message code="gwRptsDef.gwRptsDefObjectName.label" default="Report Name" />
 		<span class="required-indicator">*</span>
 	</label>
 	<g:textField name="gwRptsDefObjectName" maxlength="120" required="" value="${gwRptsDefInstance?.gwRptsDefObjectName}"/>
