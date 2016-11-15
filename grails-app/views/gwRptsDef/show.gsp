@@ -25,7 +25,7 @@
 			
 				<g:if test="${gwRptsDefInstance?.gwRptsDefObjectName}">
 				<li class="fieldcontain">
-					<span id="gwRptsDefObjectName-label" class="property-label"><g:message code="gwRptsDef.gwRptsDefObjectName.label" default="Gw Rpts Def Object Name" /></span>
+					<span id="gwRptsDefObjectName-label" class="property-label"><g:message code="gwRptsDef.gwRptsDefObjectName.label" default="Report Name" /></span>
 					
 						<span class="property-value" aria-labelledby="gwRptsDefObjectName-label"><g:fieldValue bean="${gwRptsDefInstance}" field="gwRptsDefObjectName"/></span>
 					
