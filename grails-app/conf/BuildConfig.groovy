@@ -72,7 +72,10 @@ grails.project.dependency.resolution = {
         compile "org.grails.plugins:db-reverse-engineer:4.0.0"
 
         // REST builder
-        compile ':rest-client-builder:2.1.1'
+//        compile ':rest-client-builder:2.1.1'
+
+        // Filterpane
+        compile "org.grails.plugins:filterpane:2.5.0"
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.9.0"
