@@ -13,8 +13,12 @@
     <title><g:layoutTitle default="ePrint"/></title>
     <asset:stylesheet src="application.css"/>
     <asset:javascript src="application.js"/>
+    <asset:javascript src="jquery-ui-1.12.1.custom"/>
     <asset:stylesheet src="eprintreport.css" />
-    %{--<link rel="stylesheet" href="${resource(dir: 'css', file: 'eprintreport.css')}" type="text/css">--}%
+    <asset:stylesheet src="grails-datatables.css"/>
+    <asset:stylesheet src="grails-datatables-jqueryui.css"/>
+    <asset:javascript src="grails-datatables.js"/>
+    <asset:javascript src="grails-datatables-jqueryui.js"/>
     <g:layoutHead/>
 </head>
 <body>
