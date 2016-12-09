@@ -138,6 +138,7 @@ local.properties
 
 ## File-based project format:
 *.iws
+*.ipr
 
 ## Plugin-specific files:
 
@@ -197,3 +198,14 @@ jspm_packages
 .DS_Store
 .slcache
 lib
+eprintreport.ipr
+grails-app/conf/hibernate/
+grails-app/migrations/
+grails-app/taglib/
+grails-app/utils/
+src/
+test/unit/
+web-app/META-INF/
+web-app/css/
+web-app/images/
+web-app/js/
