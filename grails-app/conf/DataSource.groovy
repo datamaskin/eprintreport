@@ -14,7 +14,7 @@ hibernate {
 environments {
     development {
         dataSource {
-            dbCreate = "update" // one of 'create', 'create-drop','update'
+            dbCreate = "none" // one of 'create', 'create-drop','update'
             url = "jdbc:mysql://localhost/erpts?useUnicode=yes&characterEncoding=UTF-8"
             username = "david"
             password = "lutefisk"
@@ -25,7 +25,8 @@ environments {
     }
     test {
         dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop','update'
+//            dbCreate = "create-drop" // one of 'create', 'create-drop','update'
+            dbCreate = "none" // one of 'create', 'create-drop','update'
             url = "jdbc:mysql://localhost/erpts?useUnicode=yes&characterEncoding=UTF-8"
             username = "david"
             password = "lutefisk"
@@ -33,7 +34,8 @@ environments {
     }
     production {
         dataSource {
-            dbCreate = "update"
+//            dbCreate = "update"
+            dbCreate = "none"
             url = "jdbc:mysql://localhost/erpts?useUnicode=yes&characterEncoding=UTF-8"
             username = "david"
             password = "lutefisk"
