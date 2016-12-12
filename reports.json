@@ -1,0 +1,101 @@
+[
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-11-22T16:19:44Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "GE_SEC_ARGOS_TK_TEST",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-11-18T21:16:19Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "gurpded",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-11-30T22:35:46Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "GZRTCCV",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-11-17T20:00:12Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "PWS_HISTORY_HONORS",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-11-29T15:49:55Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "saretmt",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-12-02T20:30:18Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "surload",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-11-29T16:46:39Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "tgphold",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-12-07T21:41:56Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "tgrfeed",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  },
+  {
+    "class": "edu.tamu.banner.eprintreport.GwRptsDef",
+    "id": null,
+    "gwRptsDefActivityDate": "2016-11-18T00:12:50Z",
+    "gwRptsDefMaintainedColl": null,
+    "gwRptsDefMaintainedDept": null,
+    "gwRptsDefObjectDesc": null,
+    "gwRptsDefObjectName": "tsrcbil",
+    "gwRptsDefRetentionDays": 30,
+    "gwRptsDefUserid": null
+  }
+]
