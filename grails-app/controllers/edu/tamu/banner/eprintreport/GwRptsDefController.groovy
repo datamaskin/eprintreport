@@ -1,9 +1,9 @@
 package edu.tamu.banner.eprintreport
 
-
+import grails.converters.JSON
+import grails.transaction.Transactional
 
 import static org.springframework.http.HttpStatus.*
-import grails.transaction.Transactional
 
 @Transactional(readOnly = true)
 class GwRptsDefController {
@@ -12,7 +12,8 @@ class GwRptsDefController {
 
     def index(Integer max) {
         params.max = Math.min(max ?: 10, 100)
-        respond GwRptsDef.list(params), model:[gwRptsDefInstanceCount: GwRptsDef.count()]
+//        respond GwRptsDef.list(params), model:[gwRptsDefInstanceCount: GwRptsDef.count()] as JSON
+        println GwRptsDef.list(params) as JSON
     }
 
     def show(GwRptsDef gwRptsDefInstance) {
