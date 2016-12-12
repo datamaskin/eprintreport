@@ -16,6 +16,8 @@ The second script populates the table with data: `mysql> source eprint_data.sql`
 
 At this point you should be able to execute: `grails run-app` at the command line.
 
+The domain JSON data can be found in the reports.json file
+
 The above assumes the following:
 * A Unix or Linux development environment or emulated.
 * git is installed and you have cloned the project from [github](https://github.com/pimpedoutgeek/eprintreport.git)
