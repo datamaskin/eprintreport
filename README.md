@@ -27,4 +27,4 @@ The above assumes the following:
 * Run sdk for the correct version of Grails in this case 2.5.0 (application.properties)
 * Run: `sdk l grails` to verify the correct version of grails is installed.
 * You should see several records under the display of 3 columns.
-* There are 7 columns of data and the target is to display the remaining 4 columns using child rows.
+* Once a user has select a `parent row` the child rows should display from the data fetched runing the query `select_gw_rpts_sequence.sql`.
