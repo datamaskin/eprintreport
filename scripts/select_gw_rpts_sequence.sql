@@ -1,1 +1,1 @@
-SELECT UNIQUE GW_RPTS_SEQUENCE FROM GW_RPTS INNER JOIN GW_RPTS_DEF ON UPPER(GW_RPTS.GW_RPTS_OBJECT_NAME) = 'GURPDED';
+SELECT DISTINCT gw_rpts_object_name, gw_rpts_sequence FROM gw_rpts INNER JOIN gw_rpts_def ON UPPER(gw_rpts.gw_rpts_object_name) = 'GURPDED';
