@@ -1,10 +1,8 @@
 package edu.tamu.banner.eprintreport
 
-import grails.plugins.rest.client.RestBuilder
-import grails.plugins.rest.client.RestResponse
 import grails.test.spock.IntegrationSpec
-import groovy.json.JsonSlurper
-import org.codehaus.groovy.grails.web.json.JSONObject
+
+import java.util.logging.Logger
 
 /**
  * Created by datamaskinaggie on 10/31/16.
@@ -36,7 +34,7 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
         Logger.getLogger(this.class).debug("CompassReports Test Integration fws_user_reports: ${ref.get(0)}")
     }*/
 
-    void "Fetch domain GwRptsDef properties from the REST endpoint" () {
+    /*void "Fetch domain GwRptsDef properties from the REST endpoint" () {
         given:
         GwRptsDef rptsDef = new GwRptsDef()
         rptsDef.gwRptsDefObjectName = "GZRTCCV"
@@ -72,5 +70,16 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
         assert names != null
         assert response.text.size() > 0
 
+    }*/
+
+    void "Fetch GwRpts reports in a join with GwRptsDef" () {
+        when:
+        def name = 'GURPDED'
+
+        then:
+        name != null
+        def reports = compassReportsService.getCompassReports(name)
+        Logger.getLogger("CompassReportsService").info("Reports: " + reports)
+        println reports
     }
 }
