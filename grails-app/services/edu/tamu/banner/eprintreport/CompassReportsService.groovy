@@ -1,5 +1,6 @@
 package edu.tamu.banner.eprintreport
 
+import grails.converters.JSON
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import org.apache.log4j.Logger
@@ -64,5 +65,21 @@ class CompassReportsService {
 
         log.debug("getCompassReportNames end: ${names}")
         names
+    }
+
+    def getCompassReports(final name) {
+        final Sql sql = new Sql(dataSource: dataSource)
+
+        log.debug("getCompassReports")
+
+        def stmt =  """
+                    select distinct gw_rpts_object_name, gw_rpts_sequence
+                    from gw_rpts inner join gw_rpts_def
+                    on upper(gw_rpts.gw_rpts_object_name) = :aName
+                    """
+        final params = [aName: name]
+
+        final results = sql.rows(stmt, params) as JSON
+        results
     }
 }
