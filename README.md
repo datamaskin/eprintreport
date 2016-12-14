@@ -18,6 +18,8 @@ At this point you should be able to execute: `grails run-app` at the command lin
 
 The domain JSON data can be found in the reports.json file
 
+The domain GwRpts JSON data can be found in the reports_sequence.json file
+
 The above assumes the following:
 * A Unix or Linux development environment or emulated.
 * git is installed and you have cloned the project from [github](https://github.com/pimpedoutgeek/eprintreport.git)
@@ -28,3 +30,11 @@ The above assumes the following:
 * Run: `sdk l grails` to verify the correct version of grails is installed.
 * You should see several records under the display of 3 columns.
 * Once a user has select a `parent row` the child rows should display from the data fetched runing the query `select_gw_rpts_sequence.sql`.
+
+#### Updates
+
+* A new Service method: getCompassReports() can be found in the services/CompassReportsService
+* The new service returns the domain GwRpts as JSON.
+* The test for the new service can be found in the test/edu.tamu.banner.eprintreport.CompassReportsTestIntegration.groovy: `Fetch GwRpts reports in a join with GwRptsDef`
+* The results of running the Spock integration test puts the JSON to the console.
+* All that is needed to run the service is to inject the service into a groovy script under `src/groovy` for example
