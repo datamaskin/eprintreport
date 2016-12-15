@@ -26,10 +26,11 @@ class GwRptsController {
         respond new GwRpts(params)
     }
 
-    def gwrptsToJSON() {
+    def gwrptsToJSON(final String report) {
         response.contentType = "application/json"
-        def gwrpts = GwRpts.findAllByGwRptsObjectName('GURPDED')
+        def gwrpts = GwRpts.findAllByGwRptsObjectName(report)
         def result = [gwRptsInstance: gwrpts]
+//        render "Params: report = $report"
         render result as JSON
 //        def result = compassReportsService.getCompassReports('GURPDED')
     }
