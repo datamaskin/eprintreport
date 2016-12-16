@@ -28,7 +28,8 @@
 			</div>
 		</div>
 		<a href="#list-gwRptsDef" class="skip" tabindex="-1"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<dt:datatable name="EprintTable" domainClass="edu.tamu.banner.eprintreport.GwRptsDef" serverSide="true">
+		<dt:datatable name="EprintTable" domainClass="edu.tamu.banner.eprintreport.GwRptsDef" serverDataLoad="true" order="[[1,'asc']]">
+            <dt:column name="gwRptsDefObjectName" defaultContent="" heading=" " dataFunction="${{domainClass -> ''}}" orderable="false" className="details-control" />
             <dt:column name="gwRptsDefObjectName" headingKey="gwRptsDef.gwRptsDefObjectName.label"/>
             <dt:column name="gwRptsDefObjectDesc" headingKey="gwRptsDef.gwRptsDefObjectDesc.label"/>
             <dt:column name="gwRptsDefActivityDate" headingKey="gwRptsDef.gwRptsDefActivityDate.label"/>
