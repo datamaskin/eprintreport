@@ -1,13 +1,19 @@
 package edu.tamu.banner.eprintreport
 
+import grails.converters.JSON
 import grails.transaction.Transactional
+import groovy.sql.GroovyResultSet
+import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
+import oracle.jdbc.driver.OracleTypes
 import org.apache.log4j.Logger
 
 @Transactional
 class CompassReportsService {
 
     def dataSource
+    def groovySql
+
     def log = Logger.getLogger(this.getClass())
 
     def  getStudentPidmUIN(final String UIN) { // Fetch student PIDM using UIN
@@ -47,8 +53,8 @@ class CompassReportsService {
         def names = [:]
 
         def stmt = '{? = call GWK_COMPASS_REPORTS.fws_user_reports(?)}'
-//        def params = [sql.resultSet(OracleTypes.CURSOR), pidm_uin]
-        def params = [sql.REF, pidm_uin]
+        def params = [sql.resultSet(OracleTypes.CURSOR), pidm_uin]
+//        def params = [sql.REF, pidm_uin]
         def gwrpts = new GwRptsDef()
         sql.call(stmt, params, { cursor ->
             cursor.eachRow { result ->
@@ -57,12 +63,38 @@ class CompassReportsService {
 //                log.debug("gw_rpts_def_object_name: ${gwrpts.gwRptsDefObjectName}", "gw_rpts_def_object_desc: ${gwrpts.gwRptsDefObjectDesc}")
 //                names.put(gwrpts.gwRptsDefObjectName, gwrpts.gwRptsDefObjectDesc)
                 names.put(gwrpts.gwRptsDefObjectName)
-//                log.debug("${gwrpts.gwRptsDefObjectName} => ${names.get(gwrpts.gwRptsDefObjectDesc)}")
-//                System.out.println(gwrpts.gwRptsDefObjectName)
+                log.debug("${gwrpts.gwRptsDefObjectName} => ${names.get(gwrpts.gwRptsDefObjectDesc)}")
+                System.out.println(gwrpts.gwRptsDefObjectName)
             }
         })
 
         log.debug("getCompassReportNames end: ${names}")
         names
+    }
+
+    def getCompassReports(final name) {
+        final Sql sql = new Sql(dataSource: dataSource)
+
+        log.debug("getCompassReports")
+
+        def stmt = """
+                   SELECT UNIQUE GW_RPTS_OBJECT_NAME, GW_RPTS_SEQUENCE 
+                   FROM ERPTS.GW_RPTS INNER JOIN ERPTS.GW_RPTS_DEF 
+                   ON UPPER(GW_RPTS.GW_RPTS_OBJECT_NAME) = :aName
+                   """
+
+        /*def stmt = """
+                   SELECT UNIQUE GW_RPTS_OBJECT_NAME, GW_RPTS_SEQUENCE
+                   FROM ERPTS.GW_RPTS WHERE GW_RPTS_OBJECT_NAME = :aName
+                   """*/
+
+        final params = [aName: name]
+        final results = sql.rows(stmt, params) as JSON
+//        final results = groovySql.rows(stmt, aName: name)
+        results
+    }
+
+    def getCompassReportsRaw(final String report) {
+
     }
 }
