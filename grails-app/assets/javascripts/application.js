@@ -28,7 +28,8 @@ if (typeof jQuery !== 'undefined') {
 					report: row.data()[1]
 				},
 				success: function ( json ) {
-					container.html( JSON.stringify(json) );
+					container.html( json.gwRptsInstance[0].gwRptsBlob.binaryStream.class );
+					//container.html( JSON.stringify(json) );
 				},
 				error: function ( json ) {
 					container.html( 'Failed to load child content: '+row.data()[1] );
