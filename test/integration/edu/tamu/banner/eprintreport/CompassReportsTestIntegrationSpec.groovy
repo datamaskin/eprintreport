@@ -82,4 +82,16 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
         Logger.getLogger("CompassReportsService").info("Reports: " + reports)
         println reports
     }
+
+    void "Fetch GwRpts blobs using hibernate native SQL query" () {
+        when:
+        BigDecimal seq = 44
+
+        then:
+        seq != null
+        def report = compassReportsService.getGwRptsBlob(44)
+        Logger.getLogger("CompassReportsService").info("Blob: " + report)
+        println report
+
+    }
 }
