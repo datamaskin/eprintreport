@@ -35,6 +35,16 @@ class GwRptsController {
 //        def result = compassReportsService.getCompassReports('GURPDED')
     }
 
+    def gwrptsSeqNameBlob(final String name) { //http://localhost:8080/EprintReport/gwrptsSNB?name=tgrfeed
+        def gwrpts = compassReportsService.getCompassReports(name)
+        render gwrpts
+    }
+
+    def gwrptsBlob(final BigInteger seq) {
+        def gwrpts = compassReportsService.getGwRptsBlob(seq)
+        render gwrpts
+    }
+
     @Transactional
     def save(GwRpts gwRptsInstance) {
         if (gwRptsInstance == null) {
