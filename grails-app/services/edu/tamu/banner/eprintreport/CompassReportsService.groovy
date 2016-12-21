@@ -74,7 +74,7 @@ class CompassReportsService {
         log.debug("getCompassReports")
 
         def stmt =  """
-                    select distinct gw_rpts_object_name, gw_rpts_sequence
+                    select distinct gw_rpts_object_name, gw_rpts_sequence, gw_rpts_blob
                     from gw_rpts inner join gw_rpts_def
                     on upper(gw_rpts.gw_rpts_object_name) = :aName
                     """
@@ -84,7 +84,7 @@ class CompassReportsService {
         results
     }
 
-    List<GwRpts> getGwRptsBlob(final BigDecimal seq) {
+    def getGwRptsBlob(final BigInteger seq) {
         final session = sessionFactory.currentSession
         final String query = """
                                 select distinct gw_rpts_object_name, gw_rpts_blob
@@ -93,13 +93,13 @@ class CompassReportsService {
                               """
         final sqlQuery = session.createSQLQuery(query)
         final queryResults = sqlQuery.with {
-            setBigDecimal('seq', seq)
+            setBigInteger('seq', seq)
             list()
         }
         final results = queryResults.collect { resultRow ->
-            [gwRptsDefObjectName: resultRow[1]]
+            [gwRptsDefObjectName: resultRow]
         }
 
-        results
+        results as JSON
     }
 }
