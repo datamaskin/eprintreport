@@ -3,7 +3,6 @@ package edu.tamu.banner.eprintreport
 import grails.test.spock.IntegrationSpec
 
 import java.util.logging.Logger
-
 /**
  * Created by datamaskinaggie on 10/31/16.
  */
@@ -85,11 +84,11 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
 
     void "Fetch GwRpts blobs using hibernate native SQL query" () {
         when:
-        BigDecimal seq = 44
+        BigInteger seq = 44
 
         then:
         seq != null
-        def report = compassReportsService.getGwRptsBlob(44)
+        def report = compassReportsService.getGwRptsBlob(seq)
         Logger.getLogger("CompassReportsService").info("Blob: " + report)
         println report
 
