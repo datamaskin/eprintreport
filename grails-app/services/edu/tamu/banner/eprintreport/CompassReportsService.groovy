@@ -84,7 +84,7 @@ class CompassReportsService {
         results
     }
 
-    def getGwRptsBlob(final long seq) {
+    def getGwRptsBlob(final BigInteger seq) {
         final session = sessionFactory.currentSession
         final String query = """
                                 select distinct gw_rpts_object_name, gw_rpts_blob
@@ -93,12 +93,11 @@ class CompassReportsService {
                               """
         final sqlQuery = session.createSQLQuery(query)
         final queryResults = sqlQuery.with {
-            setlong('seq', seq)
+            setBigInteger('seq', seq)
             list()
         }
         final results = queryResults.collect { resultRow ->
-//            [gwRptsBlob: resultRow[1]]
-            [gwRptsBlob: resultRow]
+            [gwRptsDefObjectName: resultRow]
         }
 
         results as JSON

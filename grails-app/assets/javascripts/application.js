@@ -23,12 +23,29 @@ if (typeof jQuery !== 'undefined') {
 			var container = $('<div>Loading...</div>');
 
 			$.ajax( {
-				url: '/EprintReport/gwRpts',
+				url: '/EprintReport/gwrptsSNB',
 				data: {
-					report: row.data()[1]
+					name: row.data()[1]
 				},
 				success: function ( json ) {
-					container.html( JSON.stringify(json) );
+					if ( json.length === 0 ) {
+						container.html( 'No data found' );
+					}
+					else {
+						var data = json[0];
+
+						var text = '';
+
+						for ( var i=0, ien=data.gw_rpts_blob.length ; i<ien ; i++ ) {
+							text += String.fromCharCode( data.gw_rpts_blob[i] );
+						}
+
+						container.html(
+							'Name: '+data.gw_rpts_object_name+'<br>'+
+							'Sequence: '+data.gw_rpts_sequence+'<br>'+
+							'Data: '+text.substr(0, 30)+'...'
+						);
+					}
 				},
 				error: function ( json ) {
 					container.html( 'Failed to load child content: '+row.data()[1] );
