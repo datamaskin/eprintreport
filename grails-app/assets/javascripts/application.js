@@ -33,7 +33,18 @@ if (typeof jQuery !== 'undefined') {
 					}
 					else {
 						var data = json[0];
-						container.html( 'Name: '+data.gw_rpts_object_name+', Sequence: '+data.gw_rpts_sequence );
+
+						var text = '';
+
+						for ( var i=0, ien=data.gw_rpts_blob.length ; i<ien ; i++ ) {
+							text += String.fromCharCode( data.gw_rpts_blob[i] );
+						}
+
+						container.html(
+							'Name: '+data.gw_rpts_object_name+'<br>'+
+							'Sequence: '+data.gw_rpts_sequence+'<br>'+
+							'Data: '+text.substr(0, 30)+'...'
+						);
 					}
 				},
 				error: function ( json ) {
