@@ -9,6 +9,7 @@ import org.apache.log4j.Logger
 class CompassReportsService {
 
     def dataSource
+    def sessionFactory
     def log = Logger.getLogger(this.getClass())
 
     def  getStudentPidmUIN(final String UIN) { // Fetch student PIDM using UIN
@@ -73,7 +74,7 @@ class CompassReportsService {
         log.debug("getCompassReports")
 
         def stmt =  """
-                    select distinct gw_rpts_object_name, gw_rpts_sequence
+                    select distinct gw_rpts_object_name, gw_rpts_sequence, gw_rpts_blob
                     from gw_rpts inner join gw_rpts_def
                     on upper(gw_rpts.gw_rpts_object_name) = :aName
                     """
@@ -81,5 +82,25 @@ class CompassReportsService {
 
         final results = sql.rows(stmt, params) as JSON
         results
+    }
+
+    def getGwRptsBlob(final long seq) {
+        final session = sessionFactory.currentSession
+        final String query = """
+                                select distinct gw_rpts_object_name, gw_rpts_blob
+                                from gw_rpts inner join gw_rpts_def
+                                on gw_rpts.gw_rpts_sequence = :seq
+                              """
+        final sqlQuery = session.createSQLQuery(query)
+        final queryResults = sqlQuery.with {
+            setlong('seq', seq)
+            list()
+        }
+        final results = queryResults.collect { resultRow ->
+//            [gwRptsBlob: resultRow[1]]
+            [gwRptsBlob: resultRow]
+        }
+
+        results as JSON
     }
 }
