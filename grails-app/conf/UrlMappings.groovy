@@ -16,5 +16,13 @@ class UrlMappings {
             controller = "gwRpts"
             action = "gwrptsToJSON"
         }
+        "/gwrptsSNB" {
+            controller = "gwRpts"
+            action = "gwrptsSeqNameBlob"
+        }
+        "/gwrptsBlob" {
+            controller = "gwRpts"
+            action = "gwrptsBlob"
+        }
 	}
 }
