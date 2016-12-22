@@ -27,12 +27,22 @@ class GwRptsController {
     }
 
     def gwrptsToJSON(final String report) {
-        response.contentType = "application/json"
-        def gwrpts = GwRpts.findAllByGwRptsObjectName(report)
+//        response.contentType = "application/json"
+        def gwrpts = GwRpts.findAllByGwRptsObjectName(report).toList()
         def result = [gwRptsInstance: gwrpts]
 //        render "Params: report = $report"
-        render result as JSON
+        render gwrpts as JSON
 //        def result = compassReportsService.getCompassReports('GURPDED')
+    }
+
+    def gwrptsSeqNameBlob(final String name) { // http://localhost:8080/EprintReport/gwrptsSNB?name=tgrfeed
+        def gwrtps = compassReportsService.getCompassReports(name)
+        render gwrtps
+    }
+
+    def gwrptsBlob(final long seq) {
+        def gwrpts = compassReportsService.getGwRptsBlob(seq)
+        render gwrpts
     }
 
     @Transactional
