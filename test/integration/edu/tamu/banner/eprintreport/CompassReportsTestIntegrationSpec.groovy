@@ -1,5 +1,6 @@
 package edu.tamu.banner.eprintreport
 
+import grails.converters.JSON
 import grails.test.spock.IntegrationSpec
 
 import java.util.logging.Logger
@@ -81,5 +82,16 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
         def reports = compassReportsService.getCompassReports(name)
         Logger.getLogger("CompassReportsService").info("Reports: " + reports)
         println reports
+    }
+
+    void "Fetch GwRpts blobs using hibernate native SQL query" () {
+        when:
+        def seq = 23
+
+        then:
+        seq != null
+        def report = compassReportsService.getGwRptsBlob(seq)
+        Logger.getLogger("CompassReportsService").info("Blob: " + report)
+        println report
     }
 }
