@@ -19,7 +19,15 @@ class GwRptsController {
     }
 
     def show(GwRpts gwRptsInstance) {
-        respond gwRptsInstance
+        BigInteger bigint = new BigInteger(21)
+
+        byte[] b = compassReportsService.getGwRptsBlobPDFBytes(bigint)
+
+        response.setContentType("application/pdf")
+        response.setContentLength(b.length)
+        response.getOutputStream().write(b)
+
+//        respond gwRptsInstance
     }
 
     def create() {
@@ -32,17 +40,22 @@ class GwRptsController {
         def result = [gwRptsInstance: gwrpts]
 //        render "Params: report = $report"
         render result as JSON
-//        def result = compassReportsService.getCompassReports('GURPDED')
+//        def result = compassReportsService.getCompassReportsAsJSON('GURPDED')
     }
 
     def gwrptsSeqNameBlob(final String name) { //http://localhost:8080/EprintReport/gwrptsSNB?name=tgrfeed
-        def gwrpts = compassReportsService.getCompassReports(name)
+        def gwrpts = compassReportsService.getCompassReportsAsJSON(name)
         render gwrpts
     }
 
     def gwrptsBlob(final BigInteger seq) {
-        def gwrpts = compassReportsService.getGwRptsBlob(seq)
+        def gwrpts = compassReportsService.getGwRptsBlobAsJSON(seq)
         render gwrpts
+    }
+
+    byte[] gwrptsBlobAsByte(final BigInteger seq) {
+        byte[] gwrptsbytes = compassReportsService.getGwRptsBlobPDFBytes(seq)
+        gwrptsbytes
     }
 
     @Transactional
