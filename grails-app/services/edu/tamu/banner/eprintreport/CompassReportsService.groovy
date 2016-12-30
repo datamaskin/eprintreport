@@ -68,13 +68,13 @@ class CompassReportsService {
         names
     }
 
-    def getCompassReports(final name) {
+    def getCompassReportsAsJSON(final name) {
         final Sql sql = new Sql(dataSource: dataSource)
 
-        log.debug("getCompassReports")
+        log.debug("getCompassReportsAsJSON")
 
         def stmt =  """
-                    select distinct gw_rpts_object_name, gw_rpts_sequence, gw_rpts_blob
+                    select distinct gw_rpts_object_name, gw_rpts_mime, gw_rpts_sequence, gw_rpts_blob
                     from gw_rpts inner join gw_rpts_def
                     on upper(gw_rpts.gw_rpts_object_name) = :aName
                     """
@@ -84,7 +84,7 @@ class CompassReportsService {
         results
     }
 
-    def getGwRptsBlob(final BigInteger seq) {
+    def getGwRptsBlobAsJSON(final BigInteger seq) {
         final session = sessionFactory.currentSession
         final String query = """
                                 select distinct gw_rpts_object_name, gw_rpts_blob
@@ -101,5 +101,25 @@ class CompassReportsService {
         }
 
         results as JSON
+    }
+
+    def getGwRptsBlobPDFBytes(final BigInteger seq) {
+
+        final session = sessionFactory.currentSession
+        final String query = """
+                                select distinct gw_rpts_blob
+                                from gw_rpts inner join gw_rpts_def
+                                on gw_rpts.gw_rpts_sequence = :seq
+                              """
+        final sqlQuery = session.createSQLQuery(query)
+        final queryResults = sqlQuery.with {
+            setBigInteger('seq', seq)
+            list()
+        }
+        final results = queryResults.collect { resultRow ->
+            [gwRptsBlob: resultRow].values()
+        }
+
+        results
     }
 }
