@@ -71,26 +71,37 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
 
     }*/
 
-    void "Fetch GwRpts reports in a join with GwRptsDef" () {
+    /*void "Fetch GwRpts reports in a join with GwRptsDef" () {
         when:
         def name = 'GURPDED'
 
         then:
         name != null
-        def reports = compassReportsService.getCompassReports(name)
+        def reports = compassReportsService.getCompassReportsAsJSON(name)
         Logger.getLogger("CompassReportsService").info("Reports: " + reports)
         println reports
     }
 
     void "Fetch GwRpts blobs using hibernate native SQL query" () {
         when:
-        BigInteger seq = 44
+        BigInteger seq = 21
 
         then:
         seq != null
-        def report = compassReportsService.getGwRptsBlob(seq)
+        def report = compassReportsService.getGwRptsBlobAsJSON(seq)
         Logger.getLogger("CompassReportsService").info("Blob: " + report)
         println report
 
+    }*/
+
+    void "Fetch GwRpts blob bytes as byte array using hibernate native SQL query" () {
+        when:
+        BigInteger seq = 50
+
+        then:
+        seq != null
+        def report = compassReportsService.getGwRptsBlobPDFBytes(seq)
+        Logger.getLogger("CompassReportsService").info("Byte array: " + report)
+        println report
     }
 }
