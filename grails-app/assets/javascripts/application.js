@@ -19,6 +19,20 @@ if (typeof jQuery !== 'undefined') {
 	})(jQuery);
 
 	(function() {
+
+        function hex2ascii(hexx) {
+
+        	if (hexx.length % 2 == 1)
+        		hexx = '0'+hexx;
+
+            hexx = hexx.toString();//force conversion
+
+            var str = '';
+            for (var i = 0; i < hexx.length; i += 2)
+                str += String.fromCharCode(parseInt(hexx.substr(i, 2), 16));
+            return str;
+        }
+
 		function getChild ( row ) {
 			var container = $('<div>Loading...</div>');
 
@@ -35,15 +49,20 @@ if (typeof jQuery !== 'undefined') {
 						var data = json[0];
 
 						var text = '';
+						var ascii = '';
 
 						for ( var i=0, ien=data.gw_rpts_blob.length ; i<ien ; i++ ) {
 							text += String.fromCharCode( data.gw_rpts_blob[i] );
 						}
 
+						ascii = hex2ascii(text);
+
 						container.html(
 							'Name: '+data.gw_rpts_object_name+'<br>'+
+							'Mime: '+data.gw_rpts_mime+'<br>'+
 							'Sequence: '+data.gw_rpts_sequence+'<br>'+
-							'Data: '+text.substr(0, 30)+'...'
+							// 'Data: '+text.substr(0, 30)+'...'
+							'Data: ' + ascii
 						);
 					}
 				},
