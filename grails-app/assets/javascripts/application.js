@@ -48,14 +48,14 @@ if (typeof jQuery !== 'undefined') {
 					else {
 						var out = [];
 
-						for ( var i=0, ien=json.length ; i<ien ; i++ ) {
-							var data = json[0];
+						for ( var i=0; i<json.length ;i++ ) {
+							var data = json[i];
 
 							var text = '';
 							var ascii = '';
 
-							for ( var i=0, ien=data.gw_rpts_blob.length ; i<ien ; i++ ) {
-								text += String.fromCharCode( data.gw_rpts_blob[i] );
+							for ( var j=0; j<data.gw_rpts_blob.length ;j++ ) {
+								text += String.fromCharCode( data.gw_rpts_blob[j] );
 							}
 
 							ascii = hex2ascii(text);
@@ -64,8 +64,8 @@ if (typeof jQuery !== 'undefined') {
 								'Name: '+data.gw_rpts_object_name+'<br>'+
 								'Mime: '+data.gw_rpts_mime+'<br>'+
 								'Sequence: '+data.gw_rpts_sequence+'<br>'+
-								// 'Data: '+text.substr(0, 30)+'...'
-								'Data: ' + ascii
+								'Data: '+text.substr(0, 150)+'...'
+								// 'Data: ' + ascii
 							);
 						}
 
