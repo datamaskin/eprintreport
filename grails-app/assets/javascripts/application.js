@@ -46,23 +46,31 @@ if (typeof jQuery !== 'undefined') {
 						container.html( 'No data found' );
 					}
 					else {
-						var data = json[0];
+						var out = [];
 
-						var text = '';
-						var ascii = '';
+						for ( var i=0, ien=json.length ; i<ien ; i++ ) {
+							var data = json[0];
 
-						for ( var i=0, ien=data.gw_rpts_blob.length ; i<ien ; i++ ) {
-							text += String.fromCharCode( data.gw_rpts_blob[i] );
+							var text = '';
+							var ascii = '';
+
+							for ( var i=0, ien=data.gw_rpts_blob.length ; i<ien ; i++ ) {
+								text += String.fromCharCode( data.gw_rpts_blob[i] );
+							}
+
+							ascii = hex2ascii(text);
+
+							out.push( 
+								'Name: '+data.gw_rpts_object_name+'<br>'+
+								'Mime: '+data.gw_rpts_mime+'<br>'+
+								'Sequence: '+data.gw_rpts_sequence+'<br>'+
+								// 'Data: '+text.substr(0, 30)+'...'
+								'Data: ' + ascii
+							);
 						}
 
-						ascii = hex2ascii(text);
-
 						container.html(
-							'Name: '+data.gw_rpts_object_name+'<br>'+
-							'Mime: '+data.gw_rpts_mime+'<br>'+
-							'Sequence: '+data.gw_rpts_sequence+'<br>'+
-							// 'Data: '+text.substr(0, 30)+'...'
-							'Data: ' + ascii
+							out.join('<br><br>')
 						);
 					}
 				},
