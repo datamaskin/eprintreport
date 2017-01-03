@@ -64,7 +64,7 @@ if (typeof jQuery !== 'undefined') {
 								'Name: '+data.gw_rpts_object_name+'<br>'+
 								'Mime: '+data.gw_rpts_mime+'<br>'+
 								'Sequence: '+data.gw_rpts_sequence+'<br>'+
-								'Data: '+text.substr(0, 150)+'...'
+								'Data: '+ascii.substr(0, 150)+'...'
 								// 'Data: ' + ascii
 							);
 						}
