@@ -20,6 +20,16 @@ if (typeof jQuery !== 'undefined') {
 
 	(function() {
 
+		function cleanString(str) {
+			var outstr = "";
+			for (var i=0; i<str.length; i++) {
+				if (str.charCodeAt(i) <= 127 && str.charCodeAt(i) > 31) {
+					outstr += str.charAt(i);
+				}
+			}
+			return outstr;
+		}
+
         function hex2ascii(hexx) {
 
         	if (hexx.length % 2 == 1)
@@ -58,16 +68,81 @@ if (typeof jQuery !== 'undefined') {
 								text += String.fromCharCode( data.gw_rpts_blob[j] );
 							}
 
-							ascii = hex2ascii(text);
+                            ascii = hex2ascii(text);
+							ascii = cleanString(ascii);
 
-							out.push( 
-								'Name: '+data.gw_rpts_object_name+'<br>'+
-								'Mime: '+data.gw_rpts_mime+'<br>'+
-								'Sequence: '+data.gw_rpts_sequence+'<br>'+
-								'Data: '+ascii.substr(0, 150)+'...'
-								// 'Data: ' + ascii
-							);
-						}
+                            /*out.push(
+                                'Name: '+data.gw_rpts_object_name+'<br>'+
+                                'Mime: '+data.gw_rpts_mime+'<br>'+
+                                'Sequence: '+data.gw_rpts_sequence+'<br>'+
+                                'Data: '+ascii.substr(0, 150)+'...'
+                                // 'Data: ' + ascii
+                            );*/
+
+                            var name = '"<ul>'+data.gw_rpts_object_name+'</ul>"';
+                            var mime = '"<li>'+data.gw_rpts_mime+'</li>"';
+                            var seq  = data.gw_rpts_sequence;
+                            var seqId = '"#'+seq+'"';
+
+                            var _data = '<div id="'+seq+'">'+ascii.substr(0, 200)+'</div>';
+
+                            var sdom = '<script>';
+                            sdom += '$('+seqId+').click(function() {$(this).replaceWith(';
+
+
+                            switch (data.gw_rpts_mime) {
+                                case 'lis' : 	console.debug("Name: " + name);
+                                				console.debug("Mime: " + mime);
+                                				console.debug("Seq: " + seq);
+											 	console.debug("Data: " + _data);
+												sdom += '"<p>'+ascii+'</p>"';
+												sdom += ')})';
+												sdom += '</script>';
+
+                                    break;
+                                case 'pdf' : 	console.debug("Name: " + name);
+                                    			console.debug("Mime: " + mime);
+                                    			console.debug("Data: " + _data);
+                                    			console.debug("Seq: " + seq);
+												sdom += '"<p>'+ascii+'</p>"';
+												sdom += ')})';
+												sdom += '</script>';
+
+                                    break;
+                                case 'log' : 	console.debug("Name: " + name);
+                                    			console.debug("Mime: " + mime);
+                                    			console.debug("Data: " + _data);
+                                    			console.debug("Seq: " + seq);
+												sdom += '"<p>'+ascii+'</p>"';
+												sdom += ')})';
+												sdom += '</script>';
+
+                                    break;
+                                case 'txt' : 	console.debug("Name: " + name);
+                                    			console.debug("Mime: " + mime);
+                                    			console.debug("Data: " + _data);
+                                    			console.debug("Seq: " + seq);
+												sdom += '"<p>'+ascii+'</p>"';
+												sdom += ')})';
+												sdom += '</script>';
+
+                                    break;
+                                case 'csv' : 	console.debug("Name: " + name);
+                                    			console.debug("Mime: " + mime);
+                                    			console.debug("Data: " + _data);
+                                    			console.debug("Seq: " + seq);
+												sdom += '"<p>'+ascii+'</p>"';
+												sdom += ')})';
+												sdom += '</script>';
+                                    break;
+                            }
+                            out.push(
+                                name +
+                                mime +
+                                _data +
+								sdom
+                            );
+                        }
 
 						container.html(
 							out.join('<br><br>')
