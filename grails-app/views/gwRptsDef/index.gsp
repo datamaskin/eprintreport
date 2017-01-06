@@ -8,6 +8,7 @@
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
+		<div id="pdfContainer" class = "pdf-content"></div>
 		<div id="header">
 			<div id="logo">
 				<asset:image src="bannereprint.gif" />
