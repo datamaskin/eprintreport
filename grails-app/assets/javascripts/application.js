@@ -18,12 +18,176 @@ if (typeof jQuery !== 'undefined') {
 		});
 	})(jQuery);
 
+
+
+	var lisTitle = /(^.+?)\d(\d)?([:,]\d\d)?((am)|(AM)|(Am)|(pm)|(PM)|(Pm))/g;
+	var lisDate = /(Date:.)((([0-9])|([0-2][0-9])|([3][0-1]))\-(Jan|JAN|Feb|FEB|MAR|Mar|APR|Apr|MAY|May|JUN|Jun|JUL|Jul|AUG|Aug|SEP|Sep|OCT|Oct|NOV|Nov|DEC|Dec)\-\d{4})|(T\+[0-9]+)/;
+	var lisPage = /(?:Page:.\d)/;
+
+	function matchAlternateAndWord(str, alt1, alt2, word) {
+		var match_alt_word = "(?i)(?:\b"+alt1+"|"+alt2+"\b)(.*?)(?:"+word+")";
+		var match;
+		var matches = [];
+
+		if (!match_alt_word.test(str)) {
+			console.debug("matchAlternateAndWord no match: " + alt1 + "," + alt2 + "," + word);
+			return;
+		}
+
+		console.debug("matchAlternateAndWord: " + alt1 + "," + alt2 + "," + word + " successful.");
+
+		while (match = match_alt_word.exec(str)) {
+			var index = 0;
+			matches.push(match[index++]);
+		}
+
+		//TODO needs attention
+    }
+
+	function matchRepeatedNonWordChar(str, ch) {
+		var match_repeated_nonword_char = "(?:"+ch+")+";
+		var match;
+		var matches = [];
+
+		if (!match_repeated_nonword_char.test(str)) {
+			console.debug("matchRepeatedNonWordChar no match: " + ch);
+			return;
+		}
+
+        console.debug("matchRepeatedNonWordChar: " + ch + " successful.");
+
+		while (match = match_repeated_nonword_char.exec(str)) {
+			var index = 0;
+			matches.push(match[index++]);
+		}
+
+		return matches;
+    }
+
+	function matchBetweenWords(str, word1, word2) {
+		var match_between_words = new RegExp("(?i)(?:"+word1+")(.*?)(?:"+word2+")");
+		var match;
+
+		if (!match_between_words.test(str)) {
+			console.debug("matchBetweenWords no match: " + word1 + " and " + word2);
+			return;
+		} else if (match = match_between_words.exec(str)) {
+			console.debug("matchBetweenWords: " + word1 + " and " + word2 + " successful.");
+		}
+
+		return match;
+
+    }
+	function matchFirstAfterWord(str, word) {
+		var match_first_after_word = new RegExp("(?i)(word)(\s\w+)");
+		var match;
+
+		if (!match_first_after_word.test(str)) {
+			console.debug("matchFirsAfterWord no match for: " + word);
+			return;
+		} else if (match = match_first_after_word.exec(str)) {
+			console.debug("matchFirstAfterWord: " + word + " successful.");
+		} else {
+			throw new Error("matchFirstAfterWord: " + word + " invalid match");
+		}
+
+		return match;
+    }
+
+	function matchUpToWord(str, word) {
+		var match_up_to_word = new RegExp("(?i).*("+word+")");
+		var match;
+
+		if (!match_up_to_word.test(str)) {
+			return;
+		} else if (match = match_up_to_word.exec(str)) {
+			console.debug("matchUpToWord: " + word + " successful.")
+		} else {
+			throw new Error("matchUpToWord: " + word + " invalid match.")
+		}
+
+		return match;
+	}
+
+    function getMatches(string, regex, index) {
+        index || (index = 1); // default to the first capturing group
+        var matches = [];
+        var match;
+        while (match = regex.exec(string)) {
+            matches.push(match[index]);
+        }
+        return matches;
+    }
+
+    function CSVToArray( strData, strDelimiter ){
+
+        strDelimiter = (strDelimiter || ",");
+
+        var objPattern = new RegExp(
+            (
+                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+                "([^\"\\" + strDelimiter + "\\r\\n]*))"
+            ),
+            "gi"
+        );
+
+        var arrData = [[]];
+
+        var arrMatches = null;
+
+        while (arrMatches = objPattern.exec( strData )){
+
+            var strMatchedDelimiter = arrMatches[ 1 ];
+
+            if (
+                strMatchedDelimiter.length &&
+                (strMatchedDelimiter != strDelimiter)
+            ){
+                arrData.push( [] );
+            }
+
+            if (arrMatches[ 2 ]){
+
+                var strMatchedValue = arrMatches[ 2 ].replace(
+                    new RegExp( "\"\"", "g" ),
+                    "\""
+                );
+            } else {
+                var strMatchedValue = arrMatches[ 3 ];
+            }
+
+            arrData[ arrData.length - 1 ].push( strMatchedValue );
+        }
+
+        return( arrData );
+    }
+
 	(function() {
 
-		function cleanString(str) {
+        String.prototype.splice = function(
+            index,
+            howManyToDelete,
+            stringToInsert /* [, ... N-1, N] */
+        ){
+            var characterArray = this.split( "" );
+
+            Array.prototype.splice.apply(
+                characterArray,
+                arguments
+            );
+
+            return(
+                characterArray.join( "" )
+            );
+        };
+
+        function cleanString(str) {
 			var outstr = "";
 			for (var i=0; i<str.length; i++) {
-				if (str.charCodeAt(i) <= 127 && str.charCodeAt(i) > 31) {
+				if (str.charCodeAt(i) < 127 && str.charCodeAt(i) > 31) {
 					outstr += str.charAt(i);
 				}
 			}
@@ -69,83 +233,91 @@ if (typeof jQuery !== 'undefined') {
 							}
 
                             ascii = hex2ascii(text);
-							ascii = cleanString(ascii);
 
-                            /*out.push(
-                                'Name: '+data.gw_rpts_object_name+'<br>'+
-                                'Mime: '+data.gw_rpts_mime+'<br>'+
-                                'Sequence: '+data.gw_rpts_sequence+'<br>'+
-                                'Data: '+ascii.substr(0, 150)+'...'
-                                // 'Data: ' + ascii
-                            );*/
+                            ascii = cleanString(ascii);
 
-                            var name = '"<ul>'+data.gw_rpts_object_name+'</ul>"';
-                            var mime = '"<li>'+data.gw_rpts_mime+'</li>"';
+                            var mime = data.gw_rpts_mime+'<br>';
+                            var name = data.gw_rpts_object_name+'<br>';
                             var seq  = data.gw_rpts_sequence;
-                            var seqId = '"#'+seq+'"';
+                            var seqId = '#'+seq;
 
-                            var _data = '<div id="'+seq+'">'+ascii.substr(0, 200)+'</div>';
+                            var _data = "";
+							var sdom = "";
+							var run = true;
 
-                            var sdom = '<script>';
-                            sdom += '$('+seqId+').click(function() {$(this).replaceWith(';
+							if (seqId == "#21")
+								run = false;
+							else if (seqId == "#49")
+								run = false;
+							else if (seqId == "#88")
+								run = false;
+
+							if (run) {
+                                // _data = '<div id="'+seq+'">'+ascii.substr(0, 200)+'</div>';
+                                _data = '<div id="'+seq+'">'+ascii+'</div>';
+                                sdom += '<script>';
+                                sdom += '$("'+seqId+'").click(function() {$(this).replaceWith("';
 
 
-                            switch (data.gw_rpts_mime) {
-                                case 'lis' : 	console.debug("Name: " + name);
-                                				console.debug("Mime: " + mime);
-                                				console.debug("Seq: " + seq);
-											 	console.debug("Data: " + _data);
-												sdom += '"<p>'+ascii+'</p>"';
-												sdom += ')})';
-												sdom += '</script>';
+                                switch (data.gw_rpts_mime) {
+                                    case 'lis' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Seq: " + seq);
+                                        console.debug("Data: " + _data);
+                                        var aTmp = getMatches(ascii, lisTitle);
+                                        sdom += '<div>' + aTmp + '</div>';
+                                        aTmp = ascii.slice(73, 90);
+                                        sdom += '<div>' + aTmp + '</div>';
 
-                                    break;
-                                case 'pdf' : 	console.debug("Name: " + name);
-                                    			console.debug("Mime: " + mime);
-                                    			console.debug("Data: " + _data);
-                                    			console.debug("Seq: " + seq);
-												sdom += '"<p>'+ascii+'</p>"';
-												sdom += ')})';
-												sdom += '</script>';
+                                        break;
+                                    case 'pdf' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+                                        sdom += '<div>' + ascii + '</div>';
 
-                                    break;
-                                case 'log' : 	console.debug("Name: " + name);
-                                    			console.debug("Mime: " + mime);
-                                    			console.debug("Data: " + _data);
-                                    			console.debug("Seq: " + seq);
-												sdom += '"<p>'+ascii+'</p>"';
-												sdom += ')})';
-												sdom += '</script>';
+                                        break;
+                                    case 'log' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+                                        sdom += '<div>' + ascii + '</div>';
 
-                                    break;
-                                case 'txt' : 	console.debug("Name: " + name);
-                                    			console.debug("Mime: " + mime);
-                                    			console.debug("Data: " + _data);
-                                    			console.debug("Seq: " + seq);
-												sdom += '"<p>'+ascii+'</p>"';
-												sdom += ')})';
-												sdom += '</script>';
+                                        break;
+                                    case 'txt' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+                                        sdom += '<div>' + ascii + '</div>';
 
-                                    break;
-                                case 'csv' : 	console.debug("Name: " + name);
-                                    			console.debug("Mime: " + mime);
-                                    			console.debug("Data: " + _data);
-                                    			console.debug("Seq: " + seq);
-												sdom += '"<p>'+ascii+'</p>"';
-												sdom += ')})';
-												sdom += '</script>';
-                                    break;
+                                        break;
+                                    case 'csv' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+                                        sdom += '<div>' + ascii + '</div>';
+                                        break;
+                                }
+
+                                sdom += '")})';
+                                sdom += '</script>';
+
+                                out.push(
+                                    name +
+                                    mime +
+                                    _data +
+                                    sdom
+                                );
                             }
-                            out.push(
-                                name +
-                                mime +
-                                _data +
-								sdom
-                            );
                         }
 
 						container.html(
-							out.join('<br><br>')
+							out.join('<div></div>')
 						);
 					}
 				},
