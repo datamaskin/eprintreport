@@ -18,9 +18,7 @@ if (typeof jQuery !== 'undefined') {
 		});
 	})(jQuery);
 
-
-
-	var lisTitle = /(^.+?)\d(\d)?([:,]\d\d)?((am)|(AM)|(Am)|(pm)|(PM)|(Pm))/g;
+	var lisTitle = /(^.+?)\d(\d)?([:,]\d\d)?((am)|(AM)|(Am)|(pm)|(PM)|(Pm))/;
 	var lisDate = /(Date:.)((([0-9])|([0-2][0-9])|([3][0-1]))\-(Jan|JAN|Feb|FEB|MAR|Mar|APR|Apr|MAY|May|JUN|Jun|JUL|Jul|AUG|Aug|SEP|Sep|OCT|Oct|NOV|Nov|DEC|Dec)\-\d{4})|(T\+[0-9]+)/;
 	var lisPage = /(?:Page:.\d)/;
 
@@ -41,7 +39,7 @@ if (typeof jQuery !== 'undefined') {
 			matches.push(match[index++]);
 		}
 
-		//TODO needs attention
+		return matches;
     }
 
 	function matchRepeatedNonWordChar(str, ch) {
@@ -99,6 +97,7 @@ if (typeof jQuery !== 'undefined') {
 		var match;
 
 		if (!match_up_to_word.test(str)) {
+			console.debug("matchUpToWord no match for: " + word);
 			return;
 		} else if (match = match_up_to_word.exec(str)) {
 			console.debug("matchUpToWord: " + word + " successful.")
@@ -117,6 +116,20 @@ if (typeof jQuery !== 'undefined') {
             matches.push(match[index]);
         }
         return matches;
+    }
+
+    function getMatch(string, regex) {
+        var match;
+
+        if (!regex.test(string)) {
+        	console.debug("match no match for: " + regex);
+        	return;
+		} else if (match = regex.exec(string)) {
+        	console.debug("match: " + regex + " successful.")
+        } else {
+        	throw new Error("match: " + regex + " invalid match.");
+		}
+        return match;
     }
 
     function CSVToArray( strData, strDelimiter ){
@@ -253,8 +266,8 @@ if (typeof jQuery !== 'undefined') {
 								run = false;
 
 							if (run) {
-                                // _data = '<div id="'+seq+'">'+ascii.substr(0, 200)+'</div>';
-                                _data = '<div id="'+seq+'">'+ascii+'</div>';
+                                _data = '<div id="'+seq+'">'+ascii.substr(0, 150)+'</div>';
+                                // _data = '<div id="'+seq+'">'+ascii+'</div>';
                                 sdom += '<script>';
                                 sdom += '$("'+seqId+'").click(function() {$(this).replaceWith("';
 
@@ -265,10 +278,7 @@ if (typeof jQuery !== 'undefined') {
                                         console.debug("Mime: " + mime);
                                         console.debug("Seq: " + seq);
                                         console.debug("Data: " + _data);
-                                        var aTmp = getMatches(ascii, lisTitle);
-                                        sdom += '<div>' + aTmp + '</div>';
-                                        aTmp = ascii.slice(73, 90);
-                                        sdom += '<div>' + aTmp + '</div>';
+                                        sdom += '<div>' + ascii + '</div>';
 
                                         break;
                                     case 'pdf' :
