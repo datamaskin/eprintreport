@@ -22,6 +22,24 @@ if (typeof jQuery !== 'undefined') {
 	var lisDate = /(Date:.)((([0-9])|([0-2][0-9])|([3][0-1]))\-(Jan|JAN|Feb|FEB|MAR|Mar|APR|Apr|MAY|May|JUN|Jun|JUL|Jul|AUG|Aug|SEP|Sep|OCT|Oct|NOV|Nov|DEC|Dec)\-\d{4})|(T\+[0-9]+)/;
 	var lisPage = /(?:Page:.\d)/;
 
+    /*function pdfToPlainText(pdfData) {
+        PDFJS.disableWorker = true;
+        var pdf = PDFJS.getDocument(pdfData);
+        pdf.then(getPages);
+    }
+    function getPages(pdf) {
+        for (var i = 0; i < pdf.numPages; i++) {
+            pdf.getPage(i + 1).then(getPageText);
+        }
+    }
+    function getPageText(page) {
+        page.getTextContent().then(function(textContent) {
+            textContent.forEach(function(o) {
+                $("#pdf").append(o.str + '</br>');
+            });
+        });
+    }*/
+
 	function matchAlternateAndWord(str, alt1, alt2, word) {
 		var match_alt_word = "(?i)(?:\b"+alt1+"|"+alt2+"\b)(.*?)(?:"+word+")";
 		var match;
@@ -132,7 +150,7 @@ if (typeof jQuery !== 'undefined') {
         return match;
     }
 
-    function CSVToArray( strData, strDelimiter ){
+    function CSVToArray( strData, strDelimiter ){ //TODO needs attention on var creation
 
         strDelimiter = (strDelimiter || ",");
 
@@ -169,7 +187,7 @@ if (typeof jQuery !== 'undefined') {
                     "\""
                 );
             } else {
-                var strMatchedValue = arrMatches[ 3 ];
+                strMatchedValue = arrMatches[ 3 ];
             }
 
             arrData[ arrData.length - 1 ].push( strMatchedValue );
@@ -258,12 +276,12 @@ if (typeof jQuery !== 'undefined') {
 							var sdom = "";
 							var run = true;
 
-							if (seqId == "#21")
+							/*if (seqId == "#21")
 								run = false;
 							else if (seqId == "#49")
 								run = false;
 							else if (seqId == "#88")
-								run = false;
+								run = false;*/
 
 							if (run) {
                                 _data = '<div id="'+seq+'">'+ascii.substr(0, 150)+'</div>';
@@ -271,14 +289,20 @@ if (typeof jQuery !== 'undefined') {
                                 sdom += '<script>';
                                 sdom += '$("'+seqId+'").click(function() {$(this).replaceWith("';
 
-
                                 switch (data.gw_rpts_mime) {
                                     case 'lis' :
                                         console.debug("Name: " + name);
                                         console.debug("Mime: " + mime);
                                         console.debug("Seq: " + seq);
                                         console.debug("Data: " + _data);
-                                        sdom += '<div>' + ascii + '</div>';
+
+                                        sdom += $('#textinput').val(ascii);
+
+                                        // potential use for PDF Blob data
+                                        /*sdom += doc.addHTML($('#content'), 0, 0, function () {
+                                            var blob = doc.output("blob");
+                                            window.open(URL.createObjectURL(blob));
+                                        });*/
 
                                         break;
                                     case 'pdf' :
@@ -286,7 +310,7 @@ if (typeof jQuery !== 'undefined') {
                                         console.debug("Mime: " + mime);
                                         console.debug("Data: " + _data);
                                         console.debug("Seq: " + seq);
-                                        sdom += '<div>' + ascii + '</div>';
+                                        sdom += $('#textinput').val(text);
 
                                         break;
                                     case 'log' :
@@ -294,7 +318,7 @@ if (typeof jQuery !== 'undefined') {
                                         console.debug("Mime: " + mime);
                                         console.debug("Data: " + _data);
                                         console.debug("Seq: " + seq);
-                                        sdom += '<div>' + ascii + '</div>';
+                                        sdom += $('#textinput').val(ascii);
 
                                         break;
                                     case 'txt' :
@@ -302,7 +326,7 @@ if (typeof jQuery !== 'undefined') {
                                         console.debug("Mime: " + mime);
                                         console.debug("Data: " + _data);
                                         console.debug("Seq: " + seq);
-                                        sdom += '<div>' + ascii + '</div>';
+                                        sdom += $('#textinput').val(ascii);
 
                                         break;
                                     case 'csv' :
@@ -310,11 +334,13 @@ if (typeof jQuery !== 'undefined') {
                                         console.debug("Mime: " + mime);
                                         console.debug("Data: " + _data);
                                         console.debug("Seq: " + seq);
+
                                         sdom += '<div>' + ascii + '</div>';
                                         break;
                                 }
 
                                 sdom += '")})';
+                                // sdom += '")';
                                 sdom += '</script>';
 
                                 out.push(
