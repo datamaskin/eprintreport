@@ -12,6 +12,7 @@ import org.apache.log4j.Logger
 class CompassReportsService {
 
     def dataSource
+    def sessionFactory
     def groovySql
 
     def log = Logger.getLogger(this.getClass())
@@ -78,7 +79,7 @@ class CompassReportsService {
         log.debug("getCompassReports")
 
         def stmt = """
-                   SELECT UNIQUE GW_RPTS_OBJECT_NAME, GW_RPTS_SEQUENCE 
+                   SELECT UNIQUE GW_RPTS_OBJECT_NAME, GW_RPTS_SEQUENCE, GW_RPTS_BLOB
                    FROM ERPTS.GW_RPTS INNER JOIN ERPTS.GW_RPTS_DEF 
                    ON UPPER(GW_RPTS.GW_RPTS_OBJECT_NAME) = :aName
                    """
@@ -89,12 +90,33 @@ class CompassReportsService {
                    """*/
 
         final params = [aName: name]
-        final results = sql.rows(stmt, params) as JSON
+//        final results = sql.rows(stmt, params) as JSON
+        final results = sql.rows(stmt, params)
 //        final results = groovySql.rows(stmt, aName: name)
         results
     }
 
-    def getCompassReportsRaw(final String report) {
+    List<LinkedHashMap<String, Object>> getGwRptsBlob(final BigDecimal seq) {
+        final session = sessionFactory.currentSession
+        final String query = """
+                                select distinct gw_rpts_object_name, gw_rpts_blob
+                                from gw_rpts inner join gw_rpts_def
+                                on gw_rpts.gw_rpts_sequence = :seq
+                              """
+        /*final String query = """
+                                select distinct gw_rpts_object_name
+                                from gw_rpts inner join gw_rpts_def
+                                on gw_rpts.gw_rpts_sequence = :seq
+                              """*/
+        final sqlQuery = session.createSQLQuery(query)
+        final queryResults = sqlQuery.with {
+            setBigDecimal('seq', seq)
+            list()
+        }
+        final results = queryResults.collect { resultRow ->
+            [gwRptsDefObjectName: resultRow[1]]
+        }
 
+        results
     }
 }
