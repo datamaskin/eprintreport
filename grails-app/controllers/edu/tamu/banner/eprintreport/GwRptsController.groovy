@@ -28,8 +28,9 @@ class GwRptsController {
         response.contentType = "application/json"
         def gwrpts = GwRpts.findAllByGwRptsObjectName(report)
         def result = [gwRptsInstance: gwrpts]
-        render result
+//        render result
 //        render result as JSON
+        render gwrpts as JSON
 //        respond result
     }
 
