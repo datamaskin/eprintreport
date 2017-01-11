@@ -11,10 +11,10 @@ class UrlMappings {
 //        "/"(view:"index")
         "/"(controller: "gwRptsDef", action: "index")
         "500"(view:'/error')
+
         "/gwRpts" {
             controller = "gwRpts"
             action = "gwrptsToJSON"
         }
-        "/gwRpts"(view: "index")
 	}
 }
