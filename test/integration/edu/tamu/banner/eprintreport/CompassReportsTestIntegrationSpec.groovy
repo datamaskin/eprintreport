@@ -129,6 +129,18 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
         println reports
     }
 
+    void "Fetch GwRpts blobs using hibernate native SQL query" () {
+        when:
+        BigDecimal seq = 44
+
+        then:
+        seq != null
+        def report = compassReportsService.getGwRptsBlob(seq)
+        Logger.getLogger("CompassReportsService").info("Blob: " + report)
+        println report
+
+    }
+
     void "Fetch Student PIDM with UIN" () {
         when:
         def uin = '826000013'
