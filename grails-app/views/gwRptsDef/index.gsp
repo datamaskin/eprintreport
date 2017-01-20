@@ -8,6 +8,7 @@
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
 	</head>
 	<body>
+		<div id="pdfContainer" class = "pdf-content"></div>
 		<div id="header">
 			<div id="logo">
 				<asset:image src="bannereprint.gif" />
@@ -35,5 +36,18 @@
             <dt:column name="gwRptsDefActivityDate" headingKey="gwRptsDef.gwRptsDefActivityDate.label"/>
         </dt:datatable>
         <asset:deferredScripts/>
+
+		%{--<div id="main" class="maincontainer">
+			<div class="contentcontainer">
+				<div class="col-sm-10">
+					<input class="form-control" id="textinput" type="hidden" />
+				</div>
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="button" class="btn btn-default" onclick="main.previewPdf()">Preview</button>
+				</div>
+			</div>
+			<iframe id="preview" class="contentcontainer"></iframe>
+		</div>--}%
+
 	</body>
 </html>
