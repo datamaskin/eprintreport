@@ -8,16 +8,26 @@ import grails.transaction.Transactional
 @Transactional(readOnly = true)
 class GwRptsController {
 
+    def compassReportsService
+
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
+//        response.contentType = "application/json"
         params.max = Math.min(max ?: 10, 100)
         respond GwRpts.list(params), model:[gwRptsInstanceCount: GwRpts.count()]
-//        respond GwRpts.findAllByGwRptsObjectName('GURPDED')
     }
 
     def show(GwRpts gwRptsInstance) {
-        respond gwRptsInstance
+        BigInteger bigint = new BigInteger(21)
+
+        byte[] b = compassReportsService.getGwRptsBlobPDFBytes(bigint)
+
+        response.setContentType("application/pdf")
+        response.setContentLength(b.length)
+        response.getOutputStream().write(b)
+
+//        respond gwRptsInstance
     }
 
     def create() {
@@ -28,10 +38,29 @@ class GwRptsController {
         response.contentType = "application/json"
         def gwrpts = GwRpts.findAllByGwRptsObjectName(report)
         def result = [gwRptsInstance: gwrpts]
-//        render result
-//        render result as JSON
-        render gwrpts as JSON
-//        respond result
+//        render "Params: report = $report"
+        render result as JSON
+//        def result = compassReportsService.getCompassReportsAsJSON('GURPDED')
+    }
+
+    def gwrptsSeqNameBlob(final String name) { //http://localhost:8080/EprintReport/gwrptsSNB?name=tgrfeed
+        def gwrpts = compassReportsService.getCompassReportsAsJSON(name)
+        render gwrpts
+    }
+
+    def gwrptsBlob(final BigInteger seq) {
+        def gwrpts = compassReportsService.getGwRptsBlobAsJSON(seq)
+        render gwrpts
+    }
+
+    byte[] gwrptsBlobAsByte(final BigInteger seq) {
+        byte[] gwrptsbytes = compassReportsService.getGwRptsBlobPDFBytes(seq)
+        gwrptsbytes
+    }
+
+    byte[] gwrptsBlobBytes(final BigInteger seq) {
+        byte[] gwrptsblobbytes = compassReportsService.getGwRptsBlobBytes(seq);
+        gwrptsblobbytes
     }
 
     @Transactional
