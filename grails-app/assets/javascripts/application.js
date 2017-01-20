@@ -18,18 +18,349 @@ if (typeof jQuery !== 'undefined') {
 		});
 	})(jQuery);
 
+	var lisTitle = /(^.+?)\d(\d)?([:,]\d\d)?((am)|(AM)|(Am)|(pm)|(PM)|(Pm))/;
+	var lisDate = /(Date:.)((([0-9])|([0-2][0-9])|([3][0-1]))\-(Jan|JAN|Feb|FEB|MAR|Mar|APR|Apr|MAY|May|JUN|Jun|JUL|Jul|AUG|Aug|SEP|Sep|OCT|Oct|NOV|Nov|DEC|Dec)\-\d{4})|(T\+[0-9]+)/;
+	var lisPage = /(?:Page:.\d)/;
+
+	function matchAlternateAndWord(str, alt1, alt2, word) {
+		var match_alt_word = "(?i)(?:\b"+alt1+"|"+alt2+"\b)(.*?)(?:"+word+")";
+		var match;
+		var matches = [];
+
+		if (!match_alt_word.test(str)) {
+			console.debug("matchAlternateAndWord no match: " + alt1 + "," + alt2 + "," + word);
+			return;
+		}
+
+		console.debug("matchAlternateAndWord: " + alt1 + "," + alt2 + "," + word + " successful.");
+
+		while (match = match_alt_word.exec(str)) {
+			var index = 0;
+			matches.push(match[index++]);
+		}
+
+		return matches;
+    }
+
+	function matchRepeatedNonWordChar(str, ch) {
+		var match_repeated_nonword_char = "(?:"+ch+")+";
+		var match;
+		var matches = [];
+
+		if (!match_repeated_nonword_char.test(str)) {
+			console.debug("matchRepeatedNonWordChar no match: " + ch);
+			return;
+		}
+
+        console.debug("matchRepeatedNonWordChar: " + ch + " successful.");
+
+		while (match = match_repeated_nonword_char.exec(str)) {
+			var index = 0;
+			matches.push(match[index++]);
+		}
+
+		return matches;
+    }
+
+	function matchBetweenWords(str, word1, word2) {
+		var match_between_words = new RegExp("(?i)(?:"+word1+")(.*?)(?:"+word2+")");
+		var match;
+
+		if (!match_between_words.test(str)) {
+			console.debug("matchBetweenWords no match: " + word1 + " and " + word2);
+			return;
+		} else if (match = match_between_words.exec(str)) {
+			console.debug("matchBetweenWords: " + word1 + " and " + word2 + " successful.");
+		}
+
+		return match;
+
+    }
+	function matchFirstAfterWord(str, word) {
+		var match_first_after_word = new RegExp("(?i)(word)(\s\w+)");
+		var match;
+
+		if (!match_first_after_word.test(str)) {
+			console.debug("matchFirsAfterWord no match for: " + word);
+			return;
+		} else if (match = match_first_after_word.exec(str)) {
+			console.debug("matchFirstAfterWord: " + word + " successful.");
+		} else {
+			throw new Error("matchFirstAfterWord: " + word + " invalid match");
+		}
+
+		return match;
+    }
+
+	function matchUpToWord(str, word) {
+		var match_up_to_word = new RegExp("(?i).*("+word+")");
+		var match;
+
+		if (!match_up_to_word.test(str)) {
+			console.debug("matchUpToWord no match for: " + word);
+			return;
+		} else if (match = match_up_to_word.exec(str)) {
+			console.debug("matchUpToWord: " + word + " successful.")
+		} else {
+			throw new Error("matchUpToWord: " + word + " invalid match.")
+		}
+
+		return match;
+	}
+
+    function getMatches(string, regex, index) {
+        index || (index = 1); // default to the first capturing group
+        var matches = [];
+        var match;
+        while (match = regex.exec(string)) {
+            matches.push(match[index]);
+        }
+        return matches;
+    }
+
+    function getMatch(string, regex) {
+        var match;
+
+        if (!regex.test(string)) {
+        	console.debug("match no match for: " + regex);
+        	return;
+		} else if (match = regex.exec(string)) {
+        	console.debug("match: " + regex + " successful.")
+        } else {
+        	throw new Error("match: " + regex + " invalid match.");
+		}
+        return match;
+    }
+
+    function CSVToArray( strData, strDelimiter ){ //TODO needs attention on var creation
+
+        strDelimiter = (strDelimiter || ",");
+
+        var objPattern = new RegExp(
+            (
+                "(\\" + strDelimiter + "|\\r?\\n|\\r|^)" +
+
+                "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" +
+
+                "([^\"\\" + strDelimiter + "\\r\\n]*))"
+            ),
+            "gi"
+        );
+
+        var arrData = [[]];
+
+        var arrMatches = null;
+
+        while (arrMatches = objPattern.exec( strData )){
+
+            var strMatchedDelimiter = arrMatches[ 1 ];
+
+            if (
+                strMatchedDelimiter.length &&
+                (strMatchedDelimiter != strDelimiter)
+            ){
+                arrData.push( [] );
+            }
+
+            if (arrMatches[ 2 ]){
+
+                var strMatchedValue = arrMatches[ 2 ].replace(
+                    new RegExp( "\"\"", "g" ),
+                    "\""
+                );
+            } else {
+                strMatchedValue = arrMatches[ 3 ];
+            }
+
+            arrData[ arrData.length - 1 ].push( strMatchedValue );
+        }
+
+        return( arrData );
+    }
+
 	(function() {
+
+        String.prototype.splice = function(
+            index,
+            howManyToDelete,
+            stringToInsert /* [, ... N-1, N] */
+        ){
+            var characterArray = this.split( "" );
+
+            Array.prototype.splice.apply(
+                characterArray,
+                arguments
+            );
+
+            return(
+                characterArray.join( "" )
+            );
+        };
+
+        function cleanString(str) {
+			var outstr = "";
+			for (var i=0; i<str.length; i++) {
+				if (str.charCodeAt(i) < 127 && str.charCodeAt(i) > 31) {
+					outstr += str.charAt(i);
+				}
+			}
+			return outstr;
+		}
+
+        function hex2ascii(hexx) {
+
+        	if (hexx.length % 2 == 1)
+        		hexx = '0'+hexx;
+
+            hexx = hexx.toString();//force conversion
+
+            var str = '';
+            for (var i = 0; i < hexx.length; i += 2)
+                str += String.fromCharCode(parseInt(hexx.substr(i, 2), 16));
+            return str;
+        }
+
 		function getChild ( row ) {
 			var container = $('<div>Loading...</div>');
 
 			$.ajax( {
-				url: '/EprintReport/gwRpts',
+				url: '/EprintReport/gwrptsSNB',
 				data: {
-					report: row.data()[1]
+					name: row.data()[1]
 				},
 				success: function ( json ) {
-					// container.html( JSON.stringify(json) );
-					container.html(json.gwRptsInstance[0].gwRptsBlob.binaryStream.class)
+					if ( json.length === 0 ) {
+						container.html( 'No data found' );
+					}
+					else {
+						var out = [];
+
+						for ( var i=0; i<json.length ;i++ ) {
+							var data = json[i];
+
+							var text = '';
+							var ascii = '';
+
+							/*for ( var j=0; j<data.gw_rpts_blob.length ;j++ ) {
+								text += String.fromCharCode( data.gw_rpts_blob[j] );
+							}*/
+
+                            // ascii = hex2ascii(text);
+
+							// ascii = btoa(ascii);
+
+                            ascii = cleanString(ascii);
+
+                            // var mime = data.gw_rpts_mime+'<br>';
+                            // var name = data.gw_rpts_object_name+'<br>';
+                            // var seq  = data.gw_rpts_sequence;
+							var mime = data['GW_RPTS_MIME'];
+							var name = data['GW_RPTS_OBJECT_NAME'];
+							var seq = data['GW_RPTS_SEQUENCE'];
+                            var seqId = '#'+seq;
+
+                            var _data = "";
+							var sdom = "";
+							var run = true;
+
+							/*if (seqId == "#21")
+								run = false;
+							else if (seqId == "#49")
+								run = false;
+							else if (seqId == "#88")
+								run = false;*/
+
+							if (run) {
+                                _data = '<div id="'+seq+'">'+ascii.substr(0, 150)+'</div>';
+                                // _data = '<div id="'+seq+'">'+ascii+'</div>';
+                                sdom += '<script>';
+                                sdom += '$("'+seqId+'").click(function() {$(this).replaceWith("';
+
+                                // switch (data.gw_rpts_mime) {
+                                switch (data['GW_RPTS_MIME']) {
+                                    case 'lis' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Seq: " + seq);
+                                        console.debug("Data: " + _data);
+
+                                        // sdom += $('#textinput').val(ascii);
+                                        // sdom += $('#textinput').val(seq);
+										sdom += $(seqId).click(function() {
+											$.ajax({
+												url: '/EprintReport/gwrptsBB',
+												data: seq,
+												success: function() {
+													window.open("");
+												}
+											})
+										});
+                                        break;
+                                    case 'pdf' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+                                        // sdom += $('#textinput').val(ascii);
+                                        // sdom += $('#textinput').val(seq);
+                                        sdom += $(seqId).click(function() {
+                                            $.ajax({
+                                                url: '/EprintReport/gwrptsBB',
+                                                data: seq,
+                                                success: function() {
+                                                    window.open("");
+                                                }
+                                            })
+                                        });
+
+                                        break;
+                                    case 'log' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+                                        // sdom += $('#textinput').val(ascii);
+                                        sdom += $('#textinput').val(seq);
+
+                                        break;
+                                    case 'txt' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+                                        // sdom += $('#textinput').val(ascii);
+                                        sdom += $('#textinput').val(seq);
+
+                                        break;
+                                    case 'csv' :
+                                        console.debug("Name: " + name);
+                                        console.debug("Mime: " + mime);
+                                        console.debug("Data: " + _data);
+                                        console.debug("Seq: " + seq);
+
+                                        // sdom += '<div>' + ascii + '</div>';
+                                        sdom += '<div>' + seq + '</div>';
+                                        break;
+                                }
+
+                                sdom += '")})';
+                                // sdom += '")';
+                                sdom += '</script>';
+
+                                out.push(
+                                    // name +
+									mime +
+                                    seqId +
+                                    _data +
+                                    sdom
+                                );
+                            }
+                        }
+
+						container.html(
+							out.join('<div></div>')
+						);
+					}
 				},
 				error: function ( json ) {
 					container.html( 'Failed to load child content: '+row.data()[1] );
