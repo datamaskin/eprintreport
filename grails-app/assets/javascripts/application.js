@@ -265,7 +265,7 @@ if (typeof jQuery !== 'undefined') {
 
                             ascii = hex2ascii(text);
 
-                            ascii = cleanString(ascii);
+                            // ascii = cleanString(ascii);
 
                             var mime = data.gw_rpts_mime+'<br>';
                             var name = data.gw_rpts_object_name+'<br>';
@@ -275,13 +275,6 @@ if (typeof jQuery !== 'undefined') {
                             var _data = "";
 							var sdom = "";
 							var run = true;
-
-							/*if (seqId == "#21")
-								run = false;
-							else if (seqId == "#49")
-								run = false;
-							else if (seqId == "#88")
-								run = false;*/
 
 							if (run) {
                                 _data = '<div id="'+seq+'">'+ascii.substr(0, 150)+'</div>';
@@ -296,7 +289,8 @@ if (typeof jQuery !== 'undefined') {
                                         console.debug("Seq: " + seq);
                                         console.debug("Data: " + _data);
 
-                                        sdom += $('#textinput').val(ascii);
+                                        // sdom += $('#textinput').val(ascii);
+										sdom += '<a href="javascript:; id="showall">'+ascii+'</a>'
 
                                         // potential use for PDF Blob data
                                         /*sdom += doc.addHTML($('#content'), 0, 0, function () {
