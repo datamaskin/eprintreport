@@ -22,7 +22,11 @@ class UrlMappings {
         }
         "/gwrptsBlob" {
             controller = "gwRpts"
-            action = "gwrptsBlob"
+            action = "gwrptsBlobAsByte"
+        }
+        "/gwrptsWriteBlob" {
+            controller = "gwRpts"
+            action = "gwrptsWriteBlobFile"
         }
 	}
 }
