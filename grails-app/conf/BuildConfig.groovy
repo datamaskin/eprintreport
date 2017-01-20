@@ -79,6 +79,7 @@ grails.project.dependency.resolution = {
 //        compile "org.grails.plugins:filterpane:2.5.0"
 
         compile "org.grails.plugins:grails-datatables:0.7"
+        runtime ':twitter-bootstrap:3.3.5'
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.9.0"
