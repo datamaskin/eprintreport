@@ -1,4 +1,3 @@
-
 <%@ page import="edu.tamu.banner.eprintreport.GwRptsDef" %>
 <!DOCTYPE html>
 <html>
@@ -40,14 +39,26 @@
 		<div id="main" class="maincontainer">
 			<div class="contentcontainer">
 				<div class="col-sm-10">
-					<input class="form-control" id="textinput" type="hidden" />
+					%{--<input class="form-control" id="textinput" type="hidden" onclick="this.show; this.window()"/>--}%
+					<input class="form-control" id="textinput" type="hidden" onclick="this.show; this.window()"/>
 				</div>
 				<div class="col-sm-offset-2 col-sm-10">
 					<button type="button" class="btn btn-default" onclick="main.previewPdf()">Preview</button>
 				</div>
 			</div>
-			<iframe id="preview" class="contentcontainer"></iframe>
+		%{--<iframe id="preview" class="contentcontainer"></iframe>--}%
+			<div id="newWindow">
+			</div>
+
 		</div>
 
 	</body>
+	<script type="application/javascript">
+		function newWin(data) {
+			var w = window.open();
+			var html = $("#newWindow").html(data);
+			$(w.document.body).html(html);
+			w.show();
+        }
+	</script>
 </html>
