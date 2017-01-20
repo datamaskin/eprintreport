@@ -53,10 +53,17 @@ class GwRptsController {
         render gwrpts
     }
 
-    byte[] gwrptsBlobAsByte(final BigInteger seq) {
-        byte[] gwrptsbytes = compassReportsService.getGwRptsBlobPDFBytes(seq)
+    def gwrptsBlobAsByte(final Long seq) {
+        def gwrptsbytes = compassReportsService.getGwRptsBlobPDFBytes(seq)
         gwrptsbytes
     }
+
+    def gwrptsWriteBlobFile(final long seq, final String fileName, final String directory, boolean reallywrite) {
+        def total = compassReportsService.writeBlobToFile(seq, fileName, directory, reallywrite)
+        total
+    }
+
+
 
     @Transactional
     def save(GwRpts gwRptsInstance) {
