@@ -1,14 +1,17 @@
 package edu.tamu.banner.eprintreport
 
+import edu.tamu.compassreport.WriteBlob
 import grails.test.spock.IntegrationSpec
 
 import java.util.logging.Logger
+
 /**
  * Created by datamaskinaggie on 10/31/16.
  */
 class CompassReportsTestIntegrationSpec extends IntegrationSpec {
 
     CompassReportsService compassReportsService
+    def dataSource
 
     /*void "Call pws_insert_report to upload a diskfile to the DB as a Blob" () {
         when:
@@ -94,7 +97,7 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
 
     }*/
 
-    void "Fetch GwRpts blob bytes as byte array using hibernate native SQL query" () {
+    /*void "Fetch GwRpts blob bytes as byte array using hibernate native SQL query" () {
         when:
         BigInteger seq = 50
 
@@ -103,5 +106,23 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
         def report = compassReportsService.getGwRptsBlobPDFBytes(seq)
         Logger.getLogger("CompassReportsService").info("Byte array: " + report)
         println report
+    }*/
+
+    void "Fetch GwRpts blob bytes as byte array using a Java class" () {
+        when:
+        BigInteger seq = 21
+        WriteBlob writeBlob = new WriteBlob()
+        writeBlob.dataSource = dataSource
+
+        then:
+        writeBlob != null
+        def len = compassReportsService.writeBlobToFile(seq, writeBlob)
+        if (len <= 0) {
+            Logger.getLogger("WriteBlob failed: " + len)
+            println "WriteBlob failed: ${len}"
+        } else {
+            Logger.getLogger("WriteBlob success: " + len)
+            println "WriteBlob sucess: ${len}"
+        }
     }
 }
