@@ -1,9 +1,12 @@
 package edu.tamu.banner.eprintreport
 
+import edu.tamu.compassreport.WriteBlob
 import grails.converters.JSON
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import org.apache.log4j.Logger
+
+import java.sql.Blob
 
 @Transactional
 class CompassReportsService {
@@ -103,9 +106,10 @@ class CompassReportsService {
         results as JSON
     }
 
-    def getGwRptsBlobPDFBytes(final BigInteger seq) {
+    def getGwRptsBlobPDFBytes(Long seq) {
 
         final session = sessionFactory.currentSession
+        BigInteger seqB = new BigInteger(seq)
         final String query = """
                                 select distinct gw_rpts_blob
                                 from gw_rpts inner join gw_rpts_def
@@ -113,13 +117,55 @@ class CompassReportsService {
                               """
         final sqlQuery = session.createSQLQuery(query)
         final queryResults = sqlQuery.with {
-            setBigInteger('seq', seq)
+            setBigInteger('seq', seqB)
             list()
         }
         final results = queryResults.collect { resultRow ->
             [gwRptsBlob: resultRow].values()
         }
 
-        results
+        results as Blob
+    }
+
+    def writeBlobToFile(final long seq, final String filename, final String directory, boolean reallyWrite=false) {
+        def results = getGwRptsBlobPDFBytes(seq)
+
+        Blob blob = results
+        def byte_stream = blob.getBinaryStream()
+        if (byte_stream == null) {
+            println "Error writing blob for: ${seq}"
+            log.debug("Error writing blob for: ${seq}")
+        }
+
+        def total = blob.length()
+        if (filename == null) reallyWrite = false
+
+        if (reallyWrite) {
+            byte[] byte_array = new byte[total]
+            def bytes_read = byte_stream.read(byte_array)
+            def fullname = ""
+            if (directory == null) {
+                fullname = "$filename"
+            } else if (directory != null && !directory.endsWith('/')) {
+                fullname = "$directory/$filename"
+            } else fullname = "$directory$filename"
+
+            def f = new File(fullname)
+
+            f.append(byte_array)
+
+            f.deleteOnExit()
+            /*def fos = new FileOutputStream(fullname)
+
+            fos.write(byte_array)
+
+            fos.close()*/
+        }
+        println "Document $seq: file: $filename, size $total"
+        return total
+    }
+
+    def writeBlobToFile(final BigInteger seq, WriteBlob writeBlob = null) {
+        def numbytes = writeBlob.writeBlob(seq)
     }
 }
