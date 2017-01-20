@@ -2,19 +2,23 @@ package edu.tamu.banner.eprintreport
 
 import grails.converters.JSON
 import grails.transaction.Transactional
-import groovy.sql.GroovyResultSet
+import grails.validation.Validateable
+import groovy.json.JsonOutput
+import groovy.json.StreamingJsonBuilder
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
-import oracle.jdbc.driver.OracleTypes
+import oracle.sql.BLOB
 import org.apache.log4j.Logger
+
+import java.sql.Blob
+import java.sql.Connection
 
 @Transactional
 class CompassReportsService {
 
+    def groovySql
     def dataSource
     def sessionFactory
-    def groovySql
-
     def log = Logger.getLogger(this.getClass())
 
     def  getStudentPidmUIN(final String UIN) { // Fetch student PIDM using UIN
@@ -54,8 +58,8 @@ class CompassReportsService {
         def names = [:]
 
         def stmt = '{? = call GWK_COMPASS_REPORTS.fws_user_reports(?)}'
-        def params = [sql.resultSet(OracleTypes.CURSOR), pidm_uin]
-//        def params = [sql.REF, pidm_uin]
+//        def params = [sql.resultSet(OracleTypes.CURSOR), pidm_uin]
+        def params = [sql.REF, pidm_uin]
         def gwrpts = new GwRptsDef()
         sql.call(stmt, params, { cursor ->
             cursor.eachRow { result ->
@@ -64,8 +68,8 @@ class CompassReportsService {
 //                log.debug("gw_rpts_def_object_name: ${gwrpts.gwRptsDefObjectName}", "gw_rpts_def_object_desc: ${gwrpts.gwRptsDefObjectDesc}")
 //                names.put(gwrpts.gwRptsDefObjectName, gwrpts.gwRptsDefObjectDesc)
                 names.put(gwrpts.gwRptsDefObjectName)
-                log.debug("${gwrpts.gwRptsDefObjectName} => ${names.get(gwrpts.gwRptsDefObjectDesc)}")
-                System.out.println(gwrpts.gwRptsDefObjectName)
+//                log.debug("${gwrpts.gwRptsDefObjectName} => ${names.get(gwrpts.gwRptsDefObjectDesc)}")
+//                System.out.println(gwrpts.gwRptsDefObjectName)
             }
         })
 
@@ -73,50 +77,161 @@ class CompassReportsService {
         names
     }
 
-    def getCompassReports(final name) {
+    def getCompassReportsAsJSON(final name) {
         final Sql sql = new Sql(dataSource: dataSource)
 
-        log.debug("getCompassReports")
+        log.debug("getCompassReportsAsJSON")
 
-        def stmt = """
-                   SELECT UNIQUE GW_RPTS_OBJECT_NAME, GW_RPTS_SEQUENCE, GW_RPTS_BLOB
-                   FROM ERPTS.GW_RPTS INNER JOIN ERPTS.GW_RPTS_DEF 
-                   ON UPPER(GW_RPTS.GW_RPTS_OBJECT_NAME) = :aName
-                   """
+        /*def stmt =  """
+                    select gw_rpts_object_name, gw_rpts_mime, gw_rpts_sequence, gw_rpts_blob
+                    from gw_rpts inner join gw_rpts_def
+                    on gw_rpts.gw_rpts_object_name = :aName
+                    """*/
 
         /*def stmt = """
-                   SELECT UNIQUE GW_RPTS_OBJECT_NAME, GW_RPTS_SEQUENCE
-                   FROM ERPTS.GW_RPTS WHERE GW_RPTS_OBJECT_NAME = :aName
-                   """*/
+                    select gw_rpts_sequence, gw_rpts_blob, gw_rpts_object_name from gw_rpts where gw_rpts_object_name = :aName
+                    """*/
+
+        def stmt = """
+                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name from gw_rpts where gw_rpts_object_name = :aName
+                    """
 
         final params = [aName: name]
-//        final results = sql.rows(stmt, params) as JSON
-        final results = sql.rows(stmt, params)
-//        final results = groovySql.rows(stmt, aName: name)
-        results
+
+        final results = sql.rows(stmt, params) //TODO JSON is an issue
+        results as JSON
+//        results
+        /*def json
+        def sw = new StringWriter().with { w ->
+            json = new StreamingJsonBuilder(w)
+        }
+        def result = json(results)
+
+//        String json = JsonOutput.prettyPrint(sw.toString())
+        result as JSON*/
     }
 
-    List<LinkedHashMap<String, Object>> getGwRptsBlob(final BigDecimal seq) {
+    def getGwRptsBlobAsJSON(final BigInteger seq) {
         final session = sessionFactory.currentSession
         final String query = """
-                                select distinct gw_rpts_object_name, gw_rpts_blob
+                                select gw_rpts_object_name, gw_rpts_mime, gw_rpts_blob
                                 from gw_rpts inner join gw_rpts_def
                                 on gw_rpts.gw_rpts_sequence = :seq
                               """
-        /*final String query = """
-                                select distinct gw_rpts_object_name
-                                from gw_rpts inner join gw_rpts_def
-                                on gw_rpts.gw_rpts_sequence = :seq
-                              """*/
         final sqlQuery = session.createSQLQuery(query)
         final queryResults = sqlQuery.with {
-            setBigDecimal('seq', seq)
+            setBigInteger('seq', seq)
             list()
         }
         final results = queryResults.collect { resultRow ->
-            [gwRptsDefObjectName: resultRow[1]]
+            [gwRptsDefObjectName: resultRow]
         }
 
         results
     }
+
+    byte[] getGwRptsBlobBytes(final BigInteger seq) {
+        final session = sessionFactory.currentSession
+
+        final String query = """
+                                select gw_rpts_blob
+                                from gw_rpts inner join gw_rpts_def
+                                on gw_rpts.gw_rpts_sequence = :seq
+                              """
+
+        final sqlQuery = session.createSQLQuery(query)
+        final queryResults = sqlQuery.with {
+            setBigInteger('seq', seq)
+            list()
+        }
+        final results = queryResults.collect { resultRow ->
+            [gwRptsBlob: resultRow].values()
+        }
+
+        Blob blob=results.get(0).toArray()[0]
+        def byte_stream = blob.getBinaryStream()
+        if( byte_stream == null ) {
+            println "Error for ${seq}"
+            throw new Exception("Binary Stream exception: " + byte_stream)
+        }
+
+        int total = blob.length();
+
+        byte[] byte_array = new byte[total]
+        byte_array
+    }
+
+    def getGwRptsBlobPDFBytes(final BigInteger seq) {
+
+        final session = sessionFactory.currentSession
+
+        final String query = """
+                                select gw_rpts_blob
+                                from gw_rpts inner join gw_rpts_def
+                                on gw_rpts.gw_rpts_sequence = :seq
+                              """
+
+        final sqlQuery = session.createSQLQuery(query)
+        final queryResults = sqlQuery.with {
+            setBigInteger('seq', seq)
+            list()
+        }
+        final results = queryResults.collect { resultRow ->
+            [gwRptsBlob: resultRow].values()
+        }
+
+        results
+    }
+
+    def writeBlobToFile(final seq, final String filename, final String directory, boolean reallyWrite=false) {
+
+        def results = getGwRptsBlobPDFBytes(seq)
+        Blob blob=results.get(0).toArray()[0]
+        def byte_stream = blob.getBinaryStream()
+        if( byte_stream == null ) {  println "Error for ${seq}"  }
+
+        int total = blob.length();
+        if (filename == null)
+            reallyWrite = false
+
+// Write to a file
+        if (reallyWrite) {
+            byte[] byte_array = new byte[total]
+            int bytes_read = byte_stream.read(byte_array)
+            def fullname = ""
+            if (directory == null) {
+                fullname = "$filename"
+            } else if (directory !=null && !directory.endsWith('/')) {
+                fullname = "$directory/$filename"
+            } else fullname = "$directory$filename"
+            def fos= new FileOutputStream(fullname)
+            fos.write(byte_array);
+            fos.close()
+        }
+        println "Document $seq: file: $filename, size $total"
+        return total
+    }
+
+    static String toCamelCase(String val){
+        def result = val.split("_").collect { word ->
+            word[0].toUpperCase() + word[1..-1].toLowerCase()
+        }.join("")
+        result[0].toLowerCase() + result[1..-1]
+    }
+
+    Collection getData(String query, Class clazz){
+        def field = ''
+        def result = []
+        final Sql sql = new Sql(dataSource: dataSource)
+        sql.rows(query).each {row ->
+            def dto = clazz.newInstance()
+            row.keySet().each{
+                field = toCamelCase(it)
+                dto."${field}" = row."${it}"
+            }
+            result << dto
+        }
+        result
+    }
+
 }
