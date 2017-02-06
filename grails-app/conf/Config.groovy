@@ -2,7 +2,7 @@
 // config files can be ConfigSlurper scripts, Java properties files, or classes
 // in the classpath in ConfigSlurper format
 
- grails.config.locations = [ /*"classpath:${appName}-config.properties",
+grails.config.locations = [ /*"classpath:${appName}-config.properties",
                              "classpath:${appName}-config.groovy",
                              "file:${userHome}/.grails/${appName}-config.properties",
                              "file:${userHome}/.grails/${appName}-config.groovy"*/
@@ -36,6 +36,8 @@ grails.mime.types = [ // the first one is the default format
 
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
+
+EprintReport.file.storage.location = "WEB-INF/files"
 
 // Legacy setting for codec used to encode data with ${}
 grails.views.default.codec = "html"
