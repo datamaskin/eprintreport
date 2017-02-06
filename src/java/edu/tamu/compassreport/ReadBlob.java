@@ -1,64 +1,139 @@
 package edu.tamu.compassreport;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.sql.Blob;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import javax.sql.DataSource;
+import java.io.*;
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by datamaskinaggie on 1/12/17.
  */
 public class ReadBlob {
-    public static void main(String args[])
-    {
-        System.out.println("Oracle Connect START.");
-        Connection conn = null;
-        String url = "jdbc:oracle:thin:@lola.tamu.edu:2521:";
-        String dbName = "DEVL";
-        String driver = "oracle.jdbc.OracleDriver";
-        String userName = "datamaskinaggie2";
-        String password = "l9uQHGXOE+dxcLvtolsePjn-=";
-        ResultSet rs = null;
+
+    Connection conn = null;
+    private String url;
+    private String dbName;
+    private String driver;
+    private String userName;
+    private String passWord;
+    private String mimetype;
+    ResultSet rs = null;
+
+    private byte[] bytes = null;
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    private void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    public DataSource dataSource = null;
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public String getDriver() {
+        return driver;
+    }
+
+    public void setDriver(String driver) {
+        this.driver = driver;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassWord() {
+        return passWord;
+    }
+
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
+    }
+
+    public String getMimetype() {
+        return mimetype;
+    }
+
+    public void setMimetype(String mimetype) {
+        this.mimetype = mimetype;
+    }
+
+    public ReadBlob() {
+    }
+
+    /*public static void main(String args[]) {
+    }*/
+
+    public byte[] readBlob(BigDecimal seq, DataSource dataSource) {
+        int length = 0;
+        int total = 0;
         try {
-            Class.forName(driver).newInstance();
-            conn = DriverManager.getConnection(url+dbName,userName,password);
+
+            DataSource ds = dataSource;
+
+            Connection conn = ds.getConnection();
 
             Statement stmt = conn.createStatement();
-//            rs =stmt.executeQuery("select distinct gw_rpts_blob from gw_rpts inner join gw_rpts_def on gw_rpts.gw_rpts_sequence = '364'");
-            // can't use distinct with blob data.
-            rs =stmt.executeQuery("select gw_rpts_blob from gw_rpts inner join gw_rpts_def on gw_rpts.gw_rpts_sequence = '364'");
+            ResultSet rs = stmt.executeQuery("select gw_rpts_blob, gw_rpts_mime FROM gw_rpts WHERE gw_rpts_sequence = '" + seq + "'");
             Blob lob = null;
+            String mimetype = new String();
             while (rs.next()) {
-                lob=rs.getBlob("gw_rpts_blob");
+                lob = rs.getBlob("GW_RPTS_BLOB");
+                mimetype = rs.getString("GW_RPTS_MIME");
             }
+            this.setMimetype(mimetype);
 
             InputStream in = lob.getBinaryStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            OutputStream outputStream = new FileOutputStream("tgphold_364.pdf");
 
-            int bufferSize = 1024;
-            int length = (int) lob.length();
+            int buffersize = 1024;
+            length = (int) lob.length();
 
-            byte[] buffer = new byte[bufferSize];
+            byte[] buffer = new byte[buffersize];
 
-            while((length = in.read(buffer)) != -1)
-            {
-                out.write(buffer,0,length);
+            while ((length = in.read(buffer)) != -1) {
+                out.write(buffer, 0, length);
             }
-            out.writeTo(outputStream);
-            in.close();
-            conn.close();
 
-            /*Process p1 =Runtime.getRuntime().exec("mspaint blobImage.png");*/
+            this.setBytes(buffer);
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            Logger.getLogger("WriteBlog").log(Level.ALL, "Reason for exception: " + e.getMessage());
         }
-
+        this.setBytes(getBytes());
+        this.setMimetype(getMimetype());
+        return this.getBytes();
     }
 }
