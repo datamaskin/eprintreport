@@ -24,9 +24,17 @@ class UrlMappings {
             controller = "gwRpts"
             action = "gwrptsBlobAsByte"
         }
+        "/gwrptsBlobToJSON" {
+            controller = "gwRpts"
+            action = "gwrptsBlobToJSON"
+        }
         "/gwrptsWriteBlob" {
             controller = "gwRpts"
-            action = "gwrptsWriteBlobFile"
+            action = "writeBlob"
+        }
+        "/gwrptsFileUpload" {
+            controller = "gwRpts"
+            action = "upload"
         }
 	}
 }
