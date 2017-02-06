@@ -6,9 +6,11 @@
 		<meta name="layout" content="eprintreport">
 		<g:set var="entityName" value="${message(code: 'gwRptsDef.label', default: 'GwRptsDef')}" />
 		<title><g:message code="default.list.label" args="[entityName]" /></title>
+		<style>
+		</style>
 	</head>
 	<body>
-		<div id="pdfContainer" class = "pdf-content"></div>
+
 		<div id="header">
 			<div id="logo">
 				<asset:image src="bannereprint.gif" />
@@ -37,29 +39,6 @@
         </dt:datatable>
         <asset:deferredScripts/>
 
-		<div id="main" class="maincontainer">
-			<div class="contentcontainer">
-				<div class="col-sm-10">
-					%{--<input class="form-control" id="textinput" type="hidden" onclick="this.show; this.window()"/>--}%
-					<input class="form-control" id="textinput" type="hidden" onclick="this.show; this.window()"/>
-				</div>
-				<div class="col-sm-offset-2 col-sm-10">
-					<button type="button" class="btn btn-default" onclick="main.previewPdf()">Preview</button>
-				</div>
-			</div>
-		%{--<iframe id="preview" class="contentcontainer"></iframe>--}%
-			<div id="newWindow">
-			</div>
+		</body>
 
-		</div>
-
-	</body>
-	<script type="application/javascript">
-		function newWin(data) {
-			var w = window.open();
-			var html = $("#newWindow").html(data);
-			$(w.document.body).html(html);
-			w.show();
-        }
-	</script>
 </html>
