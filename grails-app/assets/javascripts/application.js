@@ -113,7 +113,8 @@ if (typeof jQuery !== 'undefined') {
                 win.document.write('<pre>'+data.responseText+'</pre>');
                 win.document.write('</body></html>');
                 break;
-            case 'csv' : datauri = 'data:text/csv,' 	+ data.responseText;
+            case 'csv' : datauri = 'data:text/html,' 	+ data.responseText;
+                win.document.location.href = datauri
                 break;
         }
     }
@@ -167,7 +168,7 @@ if (typeof jQuery !== 'undefined') {
 									console.debug("Mime: " + mime);
 									console.debug("Seq: " + seq);
                                     console.debug("Data: " + _data);*/
-                                    var period = '.';
+                                    period = '.';
                                     filename = seq+period+mime;
                                     filename = filename.trim();
                                     _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
@@ -181,7 +182,7 @@ if (typeof jQuery !== 'undefined') {
 									console.debug("Mime: " + mime);
 									console.debug("Seq: " + seq);*/
                                     // console.debug("Data: " + _data);
-                                    var period = '.';
+                                    period = '.';
                                     filename = seq+period+mime;
                                     filename = filename.trim();
                                     _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
@@ -193,7 +194,7 @@ if (typeof jQuery !== 'undefined') {
 									console.debug("Mime: " + mime);
 									console.debug("Seq: " + seq);*/
                                     // console.debug("Data: " + _data);
-                                    var period = '.';
+                                    period = '.';
                                     filename = seq+period+mime;
                                     filename = filename.trim();
                                     _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
@@ -205,8 +206,10 @@ if (typeof jQuery !== 'undefined') {
 									console.debug("Seq: " + seq);*/
                                     // console.debug("Data: " + _data);
 
-                                    /*filename = seq+"."+mime;
-                                    _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="wblob('+seq+'); gdoc();">'+created+'</a>';*/
+                                    period = '.';
+                                    filename = seq+period+mime;
+                                    filename = filename.trim();
+                                    _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
 									break;
 							}
 
