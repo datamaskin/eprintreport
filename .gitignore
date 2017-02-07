@@ -158,7 +158,6 @@ crashlytics-build.properties
 fabric.properties
 ### Node template
 # Logs
-logs
 *.log
 npm-debug.log*
 
@@ -201,6 +200,5 @@ lib
 .java-version
 *.txt
 *.pdf
-*.log
 *.lis
 files
