@@ -31,7 +31,7 @@ class CompassReportsTestIntegrationSpec extends IntegrationSpec {
 
     void "Fetch GwRpts blob bytes as byte array using a Java class" () {
         when:
-        BigInteger seq = 88
+        BigInteger seq = 41
         WriteBlob writeBlob = new WriteBlob()
         writeBlob.setDataSource(dataSource)
 
