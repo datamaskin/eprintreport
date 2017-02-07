@@ -1,5 +1,7 @@
 package edu.tamu.banner.eprintreport
 
+import edu.tamu.compassreport.CsvXls
+import edu.tamu.compassreport.ToHtml
 import edu.tamu.compassreport.WriteBlob
 import grails.converters.JSON
 import org.apache.commons.io.IOUtils
@@ -119,7 +121,6 @@ class GwRptsController {
 
         log.debug "upload: ${fileName}"
 
-
         def input = null
         def paths = servletContext.getResourcePaths("/WEB-INF/files")
         paths.each {
@@ -127,11 +128,13 @@ class GwRptsController {
             println "path ${it}"
         }
 
+        def realpath = servletContext.getRealPath("/WEB-INF/files")
+
         def (name, mime) = fileName.tokenize('.')
 
         switch (mime.toLowerCase()) {
             case 'pdf' :
-                input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).bytes.encodeAsBase64()
+                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).bytes.encodeAsBase64()
                 break
             case 'lis' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
                 break
@@ -139,10 +142,15 @@ class GwRptsController {
                 break
             case 'log' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
                 break
-            case 'csv' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
+            case 'csv' :
+                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
+                        CsvXls.csvToXLS(input, name, realpath)
+                        ToHtml toHtml = ToHtml.create(realpath+"/"+name+".xls", new PrintWriter(new FileWriter(realpath+"/"+name+".html")))
+                        toHtml.setCompleteHTML(true)
+                        toHtml.printPage()
+                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + name+".html").getText('UTF-8')
+                break
         }
-
-//        java.util.logging.Logger.getLogger("Document: " + input.toString())
 
         render input
 
