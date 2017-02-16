@@ -35,12 +35,34 @@ if (typeof jQuery !== 'undefined') {
         );
     };
 
+    function runExecApp(filename) {
+        console.debug("Running application for: " + filename)
+
+        return $.ajax({
+            url: "/EprintReport/gwrptsExecApp",
+            data: {
+                fileName: filename
+            }
+        }).success(function( filename ) {
+            if ( console && console.log ) {
+                console.debug( "runExecApp success filename:", filename);
+            }
+        }).fail(function (filename) {
+            if (console && console.log) {
+                console.debug("runExecApp failed for filename:", filename);
+            }
+        }).error(function (xhr, ajaxOptions, thrownError){
+            if(xhr.status==404) {
+                alert(thrownError);
+            }
+        }).complete(function (filename) {
+            console.debug("runExecApp complete filename:", filename);
+        });
+    }
+
     function writeBlob(filename) {
 
     	console.debug(filename);
-    	/*var tok = filename.tokenize(".");
-    	var seq = tok[0];
-    	var mime = tok[1];*/
 
         return $.ajax({
             url: "/EprintReport/gwrptsWriteBlob",
@@ -60,13 +82,14 @@ if (typeof jQuery !== 'undefined') {
                 alert(thrownError);
             }
         }).complete(function (filename) {
-            console.debug("Doc complete wblob filename:", filename.responseText);
+            // console.debug("Doc complete wblob filename:", filename.responseText);
             getDoc(filename.responseText);
         });
     }
 
     function getDoc(filename) {
     	console.debug("getDoc:", filename);
+        var mime = filename.split('.');
 
         return $.ajax({
             url: "/EprintReport/gwrptsFileUpload",
@@ -76,7 +99,7 @@ if (typeof jQuery !== 'undefined') {
 			method: 'post'
         }).success(function( data ) {
             if ( console && console.log ) {
-                console.debug( "Doc success data:", data.responseText, filename);
+                // console.debug( "Doc success data:", data.responseText, filename);
             }
         }).fail(function (filename) {
             if (console && console.log) {
@@ -87,36 +110,88 @@ if (typeof jQuery !== 'undefined') {
                 alert(thrownError);
             }
         }).complete(function (data) {
-            console.debug("Doc complete data: ", data.responseText, filename);
-            showDoc(data, filename);
+            // console.debug("Doc complete data: ", data.responseText, filename);
+            if (mime[1].toLowerCase() != 'xls')
+                showDoc(data, filename);
+            else
+                saveXls(data, filename);
         });
+    }
+
+    function saveXls(data, fileName) {
+
+        download(data.responseText, fileName, "application/vnd.ms-excel");
+
+        return false;
     }
 
     function showDoc(data, fileName)
     {
-    	console.debug("showDoc:", fileName, data.responseText);
+    	// console.debug("showDoc:", fileName, data.responseText);
 
         var mime = fileName.split('.');
 
         var datauri;
 
-        var win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
+        var win;
 
         switch (mime[1].toLowerCase()) {
             case 'pdf' : datauri = 'data:application/pdf;base64,' + data.responseText;
-                win.document.location.href = datauri;
+                $("<div>Display in new window<br/>Or save file?</div>").dialog({
+                    modal: true,
+                    buttons: {
+                        "Ok": function() {
+                            win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
+                            win.document.location.href = datauri;
+                            $(this).dialog("close");
+                        },
+                        "Save": function() {
+                            download(datauri, fileName, "application/pdf");
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
                 break;
             case 'lis' :
             case 'txt' :
             case 'log' : datauri = 'data:text/plain,' 	+ data.responseText;
-                win.document.write('<html><head><title>Text</title><link rel="stylesheet" type="text/css" href="styles.css"></head><body>');
-                win.document.write('<pre>'+data.responseText+'</pre>');
-                win.document.write('</body></html>');
+                $("<div>Display in new window?</div>").dialog({
+                    modal: true,
+                    buttons: {
+                        "Ok": function() {
+                            win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
+                            win.document.write('<html><head><title>Text</title><link rel="stylesheet" type="text/css" href="styles.css"></head><body>');
+                            win.document.write('<pre>'+data.responseText+'</pre>');
+                            win.document.write('</body></html>');
+                            $(this).dialog("close");
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
                 break;
             case 'csv' : datauri = 'data:text/html,' 	+ data.responseText;
-                win.document.location.href = datauri
+                $("<div>Display in new window<br/>Or save file?</div>").dialog({
+                    modal: true,
+                    buttons: {
+                        "Ok": function() {
+                            win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
+                            win.document.location.href = datauri;
+                            $(this).dialog("close");
+                        },
+                        "Save": function() {
+                            getDoc(mime[0]+".xls");
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
                 break;
         }
+
     }
 
     (function() {
@@ -158,7 +233,7 @@ if (typeof jQuery !== 'undefined') {
                                     filename = filename.trim();
                                     var lmime = '"'+mime+'"';
                                     _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
-
+                                    _data += '<div id="dialog"></div>';
                                     sdom += '<script>';
                                     sdom += '</script>';
 
