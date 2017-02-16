@@ -10,12 +10,12 @@ import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.sql.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -134,7 +134,28 @@ public class WriteBlob {
 
             InputStream in = lob.getBinaryStream();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            OutputStream ops = new FileOutputStream(getPath() + seq + "." + mimetype);
+
+            Set<PosixFilePermission> perms = new HashSet<PosixFilePermission>();
+            //add owners permission
+            perms.add(PosixFilePermission.OWNER_READ);
+            perms.add(PosixFilePermission.OWNER_WRITE);
+            perms.add(PosixFilePermission.OWNER_EXECUTE);
+            //add group permissions
+            perms.add(PosixFilePermission.GROUP_READ);
+            perms.add(PosixFilePermission.GROUP_WRITE);
+            perms.add(PosixFilePermission.GROUP_EXECUTE);
+            //add others permissions
+            perms.add(PosixFilePermission.OTHERS_READ);
+            perms.add(PosixFilePermission.OTHERS_WRITE);
+            perms.add(PosixFilePermission.OTHERS_EXECUTE);
+
+//            Files.setPosixFilePermissions(Paths.get(getPath() + seq + "." + mimetype), perms);
+
+            File file = new File(getPath() + seq + "." + mimetype);
+
+//            OutputStream ops = new FileOutputStream(getPath() + seq + "." + mimetype);
+
+            OutputStream ops = new FileOutputStream(file);
 
             logger.logp(Level.ALL, "WriteBlob", "writeBlob", "Filename: " + seq+"."+mimetype);
 
