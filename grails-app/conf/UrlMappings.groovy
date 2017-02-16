@@ -36,5 +36,9 @@ class UrlMappings {
             controller = "gwRpts"
             action = "upload"
         }
+        "/gwrptsExecApp" {
+            controller = "gwRpts"
+            action = "execApp"
+        }
 	}
 }
