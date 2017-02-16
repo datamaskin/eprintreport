@@ -1,26 +1,31 @@
 package edu.tamu.banner.eprintreport
 
 import edu.tamu.compassreport.CsvXls
+import edu.tamu.compassreport.SystemCommandProcessor
 import edu.tamu.compassreport.ToHtml
 import edu.tamu.compassreport.WriteBlob
 import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.monitor.FileEntry
+import org.apache.commons.lang.SystemUtils
+import org.springframework.web.context.support.ServletContextResource
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
+import static groovy.io.FileType.FILES
 
 @Transactional(readOnly = true)
 class GwRptsController {
 
     def compassReportsService
+    def grailsResourceLocator
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
-//        response.contentType = "application/json"
+
         params.max = Math.min(max ?: 10, 100)
         respond GwRpts.list(params), model:[gwRptsInstanceCount: GwRpts.count()]
     }
@@ -37,7 +42,6 @@ class GwRptsController {
         response.getOutputStream().write(b)
         response.getOutputStream().flush()
 
-//        respond gwRptsInstance
     }
 
     def create() {
@@ -136,10 +140,10 @@ class GwRptsController {
             case 'pdf' :
                         input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).bytes.encodeAsBase64()
                 break
-            case 'lis' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
-                break
-            case 'txt' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
-                break
+            case 'lis' : /*input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')*/
+//                break
+            case 'txt' : /*input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')*/
+//                break
             case 'log' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
                 break
             case 'csv' :
@@ -150,10 +154,71 @@ class GwRptsController {
                         toHtml.printPage()
                         input = servletContext.getResourceAsStream("/WEB-INF/files/" + name+".html").getText('UTF-8')
                 break
+            case 'xls' :
+                        input = "data:application/vnd.ms-excel;base64,"+grailsApplication.mainContext.getResource("/WEB-INF/files/" + fileName).getFile().bytes.encodeAsBase64()
+                break
         }
 
         render input
 
+    }
+
+    def execApp(String fileName) {
+
+        /*SystemCommandProcessor scp = new SystemCommandProcessor()
+        log.debug "execApp: ${fileName}"
+
+        def paths = servletContext.getResourcePaths("/WEB-INF/files")
+        paths.each {
+            log.debug "path: ${it}"
+            println "path ${it}"
+        }
+
+        def realpath = servletContext.getRealPath("/WEB-INF/files")*/
+
+        def (name, mime) = fileName.tokenize('.')
+
+        /*new File("c:/temp").eachFileMatch(~/.*.txt/) { file ->
+            println file.getName()
+        }
+
+        File[] appFiles = null*/
+//        new File('/Applications/Master PDF Editor.app/Contents/MacOS/')
+        /*if (SystemUtils.IS_OS_MAC_OSX) {
+
+            appFiles = new File('C:/Program Files (x86)/Adobe/Acrobat Reader DC/Reader/').listFiles({ File file ->
+                [
+                        "Microsoft Excel",
+                        "Preview",
+                        "Master PDF Editor",
+                        "AcroRd32.exe"
+                ].any { file.name.endsWith(it) }
+            } as FileFilter)
+        } else if (SystemUtils.IS_OS_WINDOWS_7) {
+            appFiles = new File('C:/Program Files (x86)/Adobe/Acrobat Reader DC/Reader/')
+        }*/
+
+
+        switch (mime.toLowerCase()) {
+            case 'pdf' : /*scp.setCommandDir("/Applications/Preview.app/Contents/MacOS/")*/
+                        /*scp.setCommandDir("/Applications/Master PDF Editor.app/Contents/MacOS/");*/
+                        /*scp.setCommandDir("/Applications/Master PDF Editor.app/Contents/MacOS/");
+                         scp.setTimeoutInSeconds(120000)
+                         scp.commands.add(appFiles[0].name)
+                         scp.setCommands(scp.commands)
+                         scp.processContent(realpath+"/"+fileName)*/
+            break
+            case 'lis' :
+                break
+            case 'txt' :
+                break
+            case 'log' :
+                break
+            case 'csv' :
+                break
+        }
+        def htmlContent = new File('/Users/datamaskinaggie/dev/grails/eis/eprintreport/grails-app/views/gwRpts/dynamictable.html').text
+        render text: htmlContent, contentType:"text/html", encoding:"UTF-8"
     }
 
     def saveUpload(){
