@@ -137,7 +137,7 @@ if (typeof jQuery !== 'undefined') {
 
         switch (mime[1].toLowerCase()) {
             case 'pdf' : datauri = 'data:application/pdf;base64,' + data.responseText;
-                $("<div>Display in new window<br/>Or save file?</div>").dialog({
+                $("<div>Display "+fileName+" in new window<br/>Or save file?</div>").dialog({
                     modal: true,
                     buttons: {
                         "Ok": function() {
@@ -156,7 +156,7 @@ if (typeof jQuery !== 'undefined') {
             case 'lis' :
             case 'txt' :
             case 'log' : datauri = 'data:text/plain,' 	+ data.responseText;
-                $("<div>Display in new window?</div>").dialog({
+                $("<div>Display "+fileName+" in new window?</div>").dialog({
                     modal: true,
                     buttons: {
                         "Ok": function() {
@@ -174,7 +174,7 @@ if (typeof jQuery !== 'undefined') {
 
                 break;
             case 'csv' : datauri = 'data:text/html,' 	+ data.responseText;
-                $("<div>Display in new window<br/>Or save file?</div>").dialog({
+                $("<div>Display "+fileName+" in new window<br/>Or save file?</div>").dialog({
                     modal: true,
                     buttons: {
                         "Ok": function() {
