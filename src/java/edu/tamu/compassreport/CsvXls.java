@@ -1,5 +1,7 @@
 package edu.tamu.compassreport;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -16,7 +18,7 @@ public class CsvXls {
         try {
 
             HSSFWorkbook workBook = new HSSFWorkbook();
-            HSSFSheet sheet = workBook.createSheet("sheet1");
+            HSSFSheet sheet = workBook.createSheet(name);
             int RowNum=0;
 
             String[] csvlines = csvdat.split("\n");
@@ -33,7 +35,9 @@ public class CsvXls {
             FileOutputStream fileOutputStream =  new FileOutputStream(xlsFileAddress);
             workBook.write(fileOutputStream);
             fileOutputStream.close();
-            System.out.println("Done");
+            System.out.println("CSV to XLS conversion done");
+            Log log = new Log4JLogger();
+            log.debug("CSV to XLS conversion done for sheet: " + sheet.getSheetName());
         } catch (Exception ex) {
             System.out.println(ex.getMessage()+"Failed to write XLS: " + xlsFileAddress);
         }
