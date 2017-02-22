@@ -8,9 +8,11 @@ import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.monitor.FileEntry
 import org.apache.commons.lang.SystemUtils
+import org.springframework.core.io.Resource
 import org.springframework.web.context.support.ServletContextResource
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
+import sun.security.util.Resources_es
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -135,15 +137,15 @@ class GwRptsController {
         def realpath = servletContext.getRealPath("/WEB-INF/files")
 
         def (name, mime) = fileName.tokenize('.')
+        def isXls = false
+        final Resource _input
 
         switch (mime.toLowerCase()) {
             case 'pdf' :
                         input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).bytes.encodeAsBase64()
                 break
-            case 'lis' : /*input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')*/
-//                break
-            case 'txt' : /*input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')*/
-//                break
+            case 'lis' :
+            case 'txt' :
             case 'log' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
                 break
             case 'csv' :
@@ -155,12 +157,18 @@ class GwRptsController {
                         input = servletContext.getResourceAsStream("/WEB-INF/files/" + name+".html").getText('UTF-8')
                 break
             case 'xls' :
-                        input = "data:application/vnd.ms-excel;base64,"+grailsApplication.mainContext.getResource("/WEB-INF/files/" + fileName).getFile().bytes.encodeAsBase64()
+//                        input = "data:application/vnd.ms-excel;base64,"+grailsApplication.mainContext.getResource("/WEB-INF/files/" + fileName).getFile().bytes.encodeAsBase64()
+//                        input = grailsApplication.mainContext.getResource("/WEB-INF/files/" + fileName).inputStream.getBytes()
+//                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).bytes
+                        InputStream inputStream = new FileInputStream(realpath+"/"+name+".xls")
+                        input = inputStream.getBytes()
+                        /*_input = grailsResourceLocator.findResourceForURI("/WEB-INF/files/" + fileName)
+                        isXls = true*/
+
                 break
         }
 
         render input
-
     }
 
     def execApp(String fileName) {
