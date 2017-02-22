@@ -232,7 +232,7 @@ if (typeof jQuery !== 'undefined') {
                                     filename = seq+period+mime;
                                     filename = filename.trim();
                                     var lmime = '"'+mime+'"';
-                                    _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
+                                    _data = '<a id="'+seq+'" title="'+filename+'" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
                                     _data += '<div id="dialog"></div>';
                                     sdom += '<script>';
                                     sdom += '</script>';
@@ -246,7 +246,7 @@ if (typeof jQuery !== 'undefined') {
                                     period = '.';
                                     filename = seq+period+mime;
                                     filename = filename.trim();
-                                    _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
+                                    _data = '<a id="'+seq+'" title="'+filename+'" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
 
                                     sdom += '<script type="application/javascript">';
                                     sdom += '</script>';
@@ -260,7 +260,7 @@ if (typeof jQuery !== 'undefined') {
                                     period = '.';
                                     filename = seq+period+mime;
                                     filename = filename.trim();
-                                    _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
+                                    _data = '<a id="'+seq+'" title="'+filename+'" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
 
 									break;
 
@@ -272,7 +272,7 @@ if (typeof jQuery !== 'undefined') {
                                     period = '.';
                                     filename = seq+period+mime;
                                     filename = filename.trim();
-                                    _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
+                                    _data = '<a id="'+seq+'" title="'+filename+'" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
 
 									break;
                                 case 'csv' : //TODO - need to employ the Apache Commons HSSF/POI API for the Excel CSV files.
@@ -284,7 +284,7 @@ if (typeof jQuery !== 'undefined') {
                                     period = '.';
                                     filename = seq+period+mime;
                                     filename = filename.trim();
-                                    _data = '<a id="'+seq+'" title="Fetch document" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
+                                    _data = '<a id="'+seq+'" title="'+filename+'" href="#" onclick="writeBlob(\''+encodeURIComponent(filename)+'\')">'+created+'</a>';
 									break;
 							}
 
