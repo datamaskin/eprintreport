@@ -137,10 +137,10 @@ if (typeof jQuery !== 'undefined') {
 
         switch (mime[1].toLowerCase()) {
             case 'pdf' : datauri = 'data:application/pdf;base64,' + data.responseText;
-                $("<div>Display "+fileName+" in new window<br/>Or save file?</div>").dialog({
+                $("<div>View "+fileName+" in new window<br/>Or save file?</div>").dialog({
                     modal: true,
                     buttons: {
-                        "Ok": function() {
+                        "View": function() {
                             win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
                             win.document.location.href = datauri;
                             $(this).dialog("close");
@@ -156,17 +156,18 @@ if (typeof jQuery !== 'undefined') {
             case 'lis' :
             case 'txt' :
             case 'log' : datauri = 'data:text/plain,' 	+ data.responseText;
-                $("<div>Display "+fileName+" in new window?</div>").dialog({
+                $("<div>View "+fileName+" in new window?<br/>Or save file?</div>").dialog({
                     modal: true,
                     buttons: {
-                        "Ok": function() {
+                        "View": function() {
                             win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
                             win.document.write('<html><head><title>Text</title><link rel="stylesheet" type="text/css" href="styles.css"></head><body>');
                             win.document.write('<pre>'+data.responseText+'</pre>');
                             win.document.write('</body></html>');
                             $(this).dialog("close");
                         },
-                        "Cancel": function() {
+                        "Save": function() {
+                            download(datauri, fileName, "text/plain");
                             $(this).dialog("close");
                         }
                     }
@@ -174,10 +175,10 @@ if (typeof jQuery !== 'undefined') {
 
                 break;
             case 'csv' : datauri = 'data:text/html,' 	+ data.responseText;
-                $("<div>Display "+fileName+" in new window<br/>Or save file?</div>").dialog({
+                $("<div>View "+fileName+" in new window<br/>Or save file?</div>").dialog({
                     modal: true,
                     buttons: {
-                        "Ok": function() {
+                        "View": function() {
                             win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
                             win.document.location.href = datauri;
                             $(this).dialog("close");
