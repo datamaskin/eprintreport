@@ -173,48 +173,58 @@ class GwRptsController {
 
     def execApp(String fileName) {
 
-        /*SystemCommandProcessor scp = new SystemCommandProcessor()
+        def temppath = "/WEB-INF/files"
+        def cmdpath = "/bin/"
+        def winpath = "C:/Windows/Systems32/"
+        SystemCommandProcessor scp = new SystemCommandProcessor()
         log.debug "execApp: ${fileName}"
 
-        def paths = servletContext.getResourcePaths("/WEB-INF/files")
+        def paths = servletContext.getResourcePaths(temppath)
         paths.each {
             log.debug "path: ${it}"
             println "path ${it}"
         }
 
-        def realpath = servletContext.getRealPath("/WEB-INF/files")*/
+        def realpath = servletContext.getRealPath(temppath)
 
         def (name, mime) = fileName.tokenize('.')
 
         /*new File("c:/temp").eachFileMatch(~/.*.txt/) { file ->
             println file.getName()
-        }
+        }*/
 
-        File[] appFiles = null*/
+        File[] appFiles = null
 //        new File('/Applications/Master PDF Editor.app/Contents/MacOS/')
-        /*if (SystemUtils.IS_OS_MAC_OSX) {
-
-            appFiles = new File('C:/Program Files (x86)/Adobe/Acrobat Reader DC/Reader/').listFiles({ File file ->
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            scp.setCommandDir(cmdpath)
+            appFiles = new File(cmdpath).listFiles({ File file ->
                 [
-                        "Microsoft Excel",
-                        "Preview",
-                        "Master PDF Editor",
-                        "AcroRd32.exe"
+                        "echo"
                 ].any { file.name.endsWith(it) }
             } as FileFilter)
         } else if (SystemUtils.IS_OS_WINDOWS_7) {
-            appFiles = new File('C:/Program Files (x86)/Adobe/Acrobat Reader DC/Reader/')
-        }*/
+            scp.setCommandDir(winpath)
+            appFiles = new File(winpath).listFiles({ File file ->
+                [
+                        "echo"
+                ].any { file.name.endsWith(it) }
+            })
+        } else if (SystemUtils.IS_OS_SOLARIS || SystemUtils.IS_OS_SUN_OS || SystemUtils.IS_OS_LINUX) {
+            scp.setCommandDir(cmdpath)
+            appFiles = new File(cmdpath).listFiles({ File file ->
+                [
+                        "echo"
+                ].any { file.name.endsWith(it) }
+            } as FileFilter)
+        }
 
+        scp.setTimeoutInSeconds(120000)
+        scp.commands.add(appFiles[0].name)
+        scp.setCommands(scp.commands)
+        scp.processContent(realpath+"/"+fileName)
 
-        switch (mime.toLowerCase()) {
-            case 'pdf' : /*scp.setCommandDir("/Applications/Preview.app/Contents/MacOS/")*/
-                        /*scp.setCommandDir("/Applications/Master PDF Editor.app/Contents/MacOS/");*/
-                        /*scp.setCommandDir("/Applications/Master PDF Editor.app/Contents/MacOS/");
-                         scp.setTimeoutInSeconds(120000)
-                         scp.commands.add(appFiles[0].name)
-                         scp.setCommands(scp.commands)
-                         scp.processContent(realpath+"/"+fileName)*/
+        /*switch (mime.toLowerCase()) {
+            case 'pdf' :
             break
             case 'lis' :
                 break
@@ -224,9 +234,8 @@ class GwRptsController {
                 break
             case 'csv' :
                 break
-        }
-        def htmlContent = new File('/Users/datamaskinaggie/dev/grails/eis/eprintreport/grails-app/views/gwRpts/dynamictable.html').text
-        render text: htmlContent, contentType:"text/html", encoding:"UTF-8"
+        }*/
+        scp
     }
 
     def saveUpload(){
