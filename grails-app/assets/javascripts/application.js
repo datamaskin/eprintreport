@@ -35,9 +35,9 @@ if (typeof jQuery !== 'undefined') {
         );
     };
 
+
     function runExecApp(filename) {
         console.debug("Running application for: " + filename)
-
         return $.ajax({
             url: "/EprintReport/gwrptsExecApp",
             data: {
@@ -58,10 +58,10 @@ if (typeof jQuery !== 'undefined') {
         }).complete(function (filename) {
             console.debug("runExecApp complete filename:", filename);
         });
+
     }
 
     function writeBlob(filename) {
-
     	console.debug(filename);
 
         return $.ajax({
@@ -82,15 +82,17 @@ if (typeof jQuery !== 'undefined') {
                 alert(thrownError);
             }
         }).complete(function (filename) {
-            // console.debug("Doc complete wblob filename:", filename.responseText);
+            console.debug("Doc complete wblob filename:", filename.responseText);
             getDoc(filename.responseText);
         });
     }
 
     function getDoc(filename) {
-    	console.debug("getDoc:", filename);
+        console.debug("getDoc:", filename);
         var mime = filename.split('.');
-
+        var fn;
+        var fname;
+        var fncnt = 0;
         return $.ajax({
             url: "/EprintReport/gwrptsFileUpload",
             data: {
@@ -99,7 +101,14 @@ if (typeof jQuery !== 'undefined') {
 			method: 'post'
         }).success(function( data ) {
             if ( console && console.log ) {
-                // console.debug( "Doc success data:", data.responseText, filename);
+                console.debug( "Doc success data:", data.responseText, filename);
+                fn = filename.split(".")
+                fname = fn[0]+"."+fn[1];
+                var fncnt = 0;
+                if (fn.length > 2) {
+                    fncnt = fn[2];
+                }
+                console.debug("fname: " + fname + " " + "fncnt: " + fncnt);
             }
         }).fail(function (filename) {
             if (console && console.log) {
@@ -116,13 +125,73 @@ if (typeof jQuery !== 'undefined') {
             else
                 saveXls(data, filename);
         });
+
     }
 
     function saveXls(data, fileName) {
 
-        download(data.responseText, fileName, "application/vnd.ms-excel");
+        var binary = data.responseText;
+        var fileName1 = fileName;
+
+        (function () {
+            // convert base64 string to byte array
+            var byteCharacters = atob(binary);
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+
+            // now that we have the byte array, construct the blob from it
+            // var blob1 = new Blob([byteArray], {type: "application/octet-stream"});
+            var blob1 = new Blob([byteArray], {type: "application/vnd.ms-excel"});
+
+            // fileName1 = "cool.gif";
+            saveAs(blob1, fileName1);
+
+        })();
 
         return false;
+    }
+
+    function saveTxt(data, fileName) {
+        var txt = data.responseText;
+
+        /*$.each(txt, function (index, value) {
+            console.debug(index + ": " + value);
+        })*/
+        (function () {
+
+            // saving text file
+            var blob = new Blob([txt], {type: "text/plain"});
+
+            saveAs(blob, fileName);
+        })();
+
+        return false;
+    }
+
+    function savePDF(data, fileName) {
+        var binary = data.responseText;
+        var fileName1 = fileName;
+
+        (function () {
+            // convert base64 string to byte array
+            var byteCharacters = atob(binary);
+            var byteNumbers = new Array(byteCharacters.length);
+            for (var i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+
+            // now that we have the byte array, construct the blob from it
+            // var blob1 = new Blob([byteArray], {type: "application/octet-stream"});
+            var blob1 = new Blob([byteArray], {type: "application/pdf"});
+
+            // fileName1 = "cool.gif";
+            saveAs(blob1, fileName1);
+
+        })();
     }
 
     function showDoc(data, fileName)
@@ -167,7 +236,7 @@ if (typeof jQuery !== 'undefined') {
                             $(this).dialog("close");
                         },
                         "Save": function() {
-                            download(datauri, fileName, "text/plain");
+                            saveTxt(data, fileName);
                             $(this).dialog("close");
                         }
                     }
@@ -192,7 +261,6 @@ if (typeof jQuery !== 'undefined') {
 
                 break;
         }
-
     }
 
     (function() {
