@@ -9,14 +9,14 @@ import org.apache.commons.io.IOUtils
 import org.apache.commons.io.monitor.FileEntry
 import org.apache.commons.lang.SystemUtils
 import org.springframework.core.io.Resource
-import org.springframework.web.context.support.ServletContextResource
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
-import sun.security.util.Resources_es
+
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
-import static groovy.io.FileType.FILES
 
 @Transactional(readOnly = true)
 class GwRptsController {
@@ -113,13 +113,15 @@ class GwRptsController {
         def tok = filename.tokenize(".")
         def name = tok[0]
         def ext = tok[1]
-        BigDecimal bigDec = new BigDecimal(name)
 
-        WriteBlob writeBlob = new WriteBlob()
+//        WriteBlob writeBlob = new WriteBlob()
 
-        def total = compassReportsService.writeBlobToFile(bigDec, writeBlob)
+        def total = compassReportsService.writeBlobToFile(filename)
 
-        render filename
+        if (total > 0)
+            render filename+"."+total
+        else
+            render filename
 
     }
 
@@ -129,16 +131,28 @@ class GwRptsController {
 
         def input = null
         def paths = servletContext.getResourcePaths("/WEB-INF/files")
+        def extdig = ~/^.+\.\d+$/
+
+        def newpath = []
+        for (path in paths) {
+            if (extdig.matcher(path).matches())
+                newpath.add(path.split("/")[3])
+        }
+
         paths.each {
             log.debug "path: ${it}"
             println "path ${it}"
         }
 
+        newpath.each {
+            println "newpath ${it}"
+        }
+
+        def fileinput = []
+
         def realpath = servletContext.getRealPath("/WEB-INF/files")
 
         def (name, mime) = fileName.tokenize('.')
-        def isXls = false
-        final Resource _input
 
         switch (mime.toLowerCase()) {
             case 'pdf' :
@@ -146,7 +160,16 @@ class GwRptsController {
                 break
             case 'lis' :
             case 'txt' :
-            case 'log' : input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
+            case 'log' :
+                        def filedata = new ArrayList<String>()
+                        InputStream inputStream
+                        /*for (path in newpath) {
+                            inputStream = new FileInputStream(realpath+"/"+path)
+                            filedata.add(inputStream.getText('UTF-8'))
+                        }*/
+
+//                        inputStream = new FileInputStream(realpath+"/"+fileName)
+                        input = input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
                 break
             case 'csv' :
                         input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
@@ -155,16 +178,12 @@ class GwRptsController {
                         toHtml.setCompleteHTML(true)
                         toHtml.printPage()
                         input = servletContext.getResourceAsStream("/WEB-INF/files/" + name+".html").getText('UTF-8')
+//                        InputStream inputStream = new FileInputStream(realpath+"/"+fileName)
+//                        input = inputStream.getText('UTF-8')
                 break
             case 'xls' :
-//                        input = "data:application/vnd.ms-excel;base64,"+grailsApplication.mainContext.getResource("/WEB-INF/files/" + fileName).getFile().bytes.encodeAsBase64()
-//                        input = grailsApplication.mainContext.getResource("/WEB-INF/files/" + fileName).inputStream.getBytes()
-//                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).bytes
-                        InputStream inputStream = new FileInputStream(realpath+"/"+name+".xls")
-                        input = inputStream.getBytes()
-                        /*_input = grailsResourceLocator.findResourceForURI("/WEB-INF/files/" + fileName)
-                        isXls = true*/
-
+                        InputStream inputStream = new FileInputStream(realpath+"/"+fileName)
+                        input = inputStream.getBytes().encodeAsBase64()
                 break
         }
 
@@ -194,7 +213,7 @@ class GwRptsController {
         }*/
 
         File[] appFiles = null
-//        new File('/Applications/Master PDF Editor.app/Contents/MacOS/')
+
         if (SystemUtils.IS_OS_MAC_OSX) {
             scp.setCommandDir(cmdpath)
             appFiles = new File(cmdpath).listFiles({ File file ->
@@ -216,6 +235,8 @@ class GwRptsController {
                         "echo"
                 ].any { file.name.endsWith(it) }
             } as FileFilter)
+        } else {
+            throw new Exception("Unknown OS...")
         }
 
         scp.setTimeoutInSeconds(120000)
@@ -223,18 +244,6 @@ class GwRptsController {
         scp.setCommands(scp.commands)
         scp.processContent(realpath+"/"+fileName)
 
-        /*switch (mime.toLowerCase()) {
-            case 'pdf' :
-            break
-            case 'lis' :
-                break
-            case 'txt' :
-                break
-            case 'log' :
-                break
-            case 'csv' :
-                break
-        }*/
         scp
     }
 
