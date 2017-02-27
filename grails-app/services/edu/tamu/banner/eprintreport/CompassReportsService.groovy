@@ -1,14 +1,13 @@
 package edu.tamu.banner.eprintreport
 
+import edu.tamu.compassreport.BLOBFile
 import edu.tamu.compassreport.ReadBlob
-import edu.tamu.compassreport.WriteBlob
 import grails.converters.JSON
 import grails.transaction.Transactional
 import groovy.sql.Sql
 import org.apache.log4j.Logger
 
 import javax.sql.DataSource
-import javax.xml.crypto.Data
 import java.sql.Blob
 
 @Transactional
@@ -96,13 +95,25 @@ class CompassReportsService {
         }
     }
 
-    def writeBlobToFile(final BigDecimal seq, WriteBlob writeBlob = null) {
+    /*def writeBlobToFile(final BigDecimal seq, WriteBlob writeBlob = null) {
         def location = grailsApplication.config.EprintReport.file.storage.location
         writeBlob.setDataSource(dataSource)
         writeBlob.setLocation(location)
         def numbytes = writeBlob.writeBlob(seq)
         log.debug "writeBlobToFile: ${seq} ${location} ${numbytes}"
         numbytes
+    }*/
+
+    def writeBlobToFile(final String fileName) {
+        def location = "/"+grailsApplication.config.EprintReport.file.storage.location
+        def path = grailsApplication.mainContext.getResource(location).file
+        def realpath = path.absolutePath
+        BLOBFile blobFile = new BLOBFile(realpath+"/"+fileName)
+        blobFile.openOracleConnection()
+        def size = blobFile.readBLOBToFileGet(fileName)
+        blobFile.closeOracleConnection()
+        log.debug "writeBlobToFile: ${fileName} ${location}"
+        size
     }
 
     byte[] readBlobToByte(final BigDecimal seq) {
@@ -111,4 +122,7 @@ class CompassReportsService {
         b
     }
 
+    def readBlobToJSON() {
+
+    }
 }
