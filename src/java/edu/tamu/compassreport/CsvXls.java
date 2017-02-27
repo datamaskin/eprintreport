@@ -35,9 +35,9 @@ public class CsvXls {
             FileOutputStream fileOutputStream =  new FileOutputStream(xlsFileAddress);
             workBook.write(fileOutputStream);
             fileOutputStream.close();
-            System.out.println("CSV to XLS conversion done");
-            Log log = new Log4JLogger();
-            log.debug("CSV to XLS conversion done for sheet: " + sheet.getSheetName());
+            System.out.println("CSV to XLS conversion done: " + name+".xls");
+            /*Log log = new Log4JLogger();
+            log.debug("CSV to XLS conversion done for sheet: " + sheet.getSheetName());*/
         } catch (Exception ex) {
             System.out.println(ex.getMessage()+"Failed to write XLS: " + xlsFileAddress);
         }
