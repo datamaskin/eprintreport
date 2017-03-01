@@ -80,6 +80,12 @@ grails.project.dependency.resolution = {
 
         compile "org.grails.plugins:grails-datatables:0.7"
         runtime ':twitter-bootstrap:3.3.5'
+        compile ":restful-api:1.0.0"
+
+        compile ":inflector:0.2"
+        compile ":cache-headers:1.1.7"
+
+        test ":funky-spock:0.2.1"
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.9.0"
