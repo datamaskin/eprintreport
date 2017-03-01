@@ -3,17 +3,14 @@ package edu.tamu.banner.eprintreport
 import edu.tamu.compassreport.CsvXls
 import edu.tamu.compassreport.SystemCommandProcessor
 import edu.tamu.compassreport.ToHtml
-import edu.tamu.compassreport.WriteBlob
 import grails.converters.JSON
 import org.apache.commons.io.IOUtils
 import org.apache.commons.io.monitor.FileEntry
 import org.apache.commons.lang.SystemUtils
-import org.springframework.core.io.Resource
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import java.sql.Blob
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -22,7 +19,6 @@ import grails.transaction.Transactional
 class GwRptsController {
 
     def compassReportsService
-    def grailsResourceLocator
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
@@ -128,9 +124,10 @@ class GwRptsController {
     def upload(String fileName) { //gwrptsFileUpload @controller
 
         log.debug "upload: ${fileName}"
+        def location = "/"+grailsApplication.config.EprintReport.file.storage.location
 
         def input = null
-        def paths = servletContext.getResourcePaths("/WEB-INF/files")
+        def paths = servletContext.getResourcePaths(location)
         def extdig = ~/^.+\.\d+$/
 
         def newpath = []
@@ -150,34 +147,47 @@ class GwRptsController {
 
         def fileinput = []
 
-        def realpath = servletContext.getRealPath("/WEB-INF/files")
+        def realpath = servletContext.getRealPath(location)
 
         def (name, mime) = fileName.tokenize('.')
 
+
         switch (mime.toLowerCase()) {
             case 'pdf' :
-                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).bytes.encodeAsBase64()
+                        input = servletContext.getResourceAsStream(location + "/" + fileName).bytes.encodeAsBase64()
                 break
             case 'lis' :
             case 'txt' :
             case 'log' :
-                        def filedata = new ArrayList<String>()
+                        /*def filedata = new ArrayList<String>()
                         InputStream inputStream
-                        /*for (path in newpath) {
+                        for (path in newpath) {
                             inputStream = new FileInputStream(realpath+"/"+path)
                             filedata.add(inputStream.getText('UTF-8'))
                         }*/
 
-//                        inputStream = new FileInputStream(realpath+"/"+fileName)
-                        input = input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
+//                        InputStream inputStream = new FileInputStream(realpath+"/"+fileName)
+                        input = servletContext.getResourceAsStream(location + "/" + fileName).getText('UTF-8')
+                        /*def output = [:]
+                        JSON.registerObjectMarshaller(GwRpts) {
+                            output['seq'] = it.seq
+                            output['gwRptsBlob'] = it.gw_rpts_blob
+                            return output
+                        }
+                        GwRpts gwRpts = new GwRpts()
+                        byte[] fileData = servletContext.getResourceAsStream(location + "/" + fileName).getBytes()
+                        Blob blob = new javax.sql.rowset.serial.SerialBlob(fileData);
+                        gwRpts.gwRptsBlob = blob
+                        input = gwRpts.gwRptsBlob*/
+
                 break
             case 'csv' :
-                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + fileName).getText('UTF-8')
+                        input = servletContext.getResourceAsStream(location + "/" + fileName).getText('UTF-8')
                         CsvXls.csvToXLS(input, name, realpath)
                         ToHtml toHtml = ToHtml.create(realpath+"/"+name+".xls", new PrintWriter(new FileWriter(realpath+"/"+name+".html")))
                         toHtml.setCompleteHTML(true)
                         toHtml.printPage()
-                        input = servletContext.getResourceAsStream("/WEB-INF/files/" + name+".html").getText('UTF-8')
+                        input = servletContext.getResourceAsStream(location + "/" + name+".html").getText('UTF-8')
 //                        InputStream inputStream = new FileInputStream(realpath+"/"+fileName)
 //                        input = inputStream.getText('UTF-8')
                 break
@@ -192,7 +202,7 @@ class GwRptsController {
 
     def execApp(String fileName) {
 
-        def temppath = "/WEB-INF/files"
+        def temppath =  "/"+grailsApplication.config.EprintReport.file.storage.location
         def cmdpath = "/bin/"
         def winpath = "C:/Windows/Systems32/"
         SystemCommandProcessor scp = new SystemCommandProcessor()
@@ -207,10 +217,6 @@ class GwRptsController {
         def realpath = servletContext.getRealPath(temppath)
 
         def (name, mime) = fileName.tokenize('.')
-
-        /*new File("c:/temp").eachFileMatch(~/.*.txt/) { file ->
-            println file.getName()
-        }*/
 
         File[] appFiles = null
 
