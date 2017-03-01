@@ -35,7 +35,6 @@ if (typeof jQuery !== 'undefined') {
         );
     };
 
-
     function runExecApp(filename) {
         console.debug("Running application for: " + filename)
         return $.ajax({
@@ -212,10 +211,13 @@ if (typeof jQuery !== 'undefined') {
                         "View": function() {
                             win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
                             win.document.location.href = datauri;
+                            runExecApp(fileName);
                             $(this).dialog("close");
                         },
                         "Save": function() {
-                            download(datauri, fileName, "application/pdf");
+                            // download(datauri, fileName, "application/pdf");
+                            savePDF(data, fileName);
+                            runExecApp(fileName);
                             $(this).dialog("close");
                         }
                     }
@@ -233,10 +235,12 @@ if (typeof jQuery !== 'undefined') {
                             win.document.write('<html><head><title>Text</title><link rel="stylesheet" type="text/css" href="styles.css"></head><body>');
                             win.document.write('<pre>'+data.responseText+'</pre>');
                             win.document.write('</body></html>');
+                            runExecApp(fileName);
                             $(this).dialog("close");
                         },
                         "Save": function() {
                             saveTxt(data, fileName);
+                            runExecApp(fileName);
                             $(this).dialog("close");
                         }
                     }
@@ -250,10 +254,12 @@ if (typeof jQuery !== 'undefined') {
                         "View": function() {
                             win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
                             win.document.location.href = datauri;
+                            runExecApp(fileName);
                             $(this).dialog("close");
                         },
                         "Save": function() {
                             getDoc(mime[0]+".xls");
+                            runExecApp(fileName);
                             $(this).dialog("close");
                         }
                     }
