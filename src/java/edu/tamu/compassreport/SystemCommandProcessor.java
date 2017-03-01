@@ -91,7 +91,8 @@ public class SystemCommandProcessor
                     workspace.setReadable(true);
                     workspace.setExecutable(true);
 //                    boolean newfile = workspace.createNewFile();
-                    Files.copy(pFile, Paths.get(workspace.getPath(), filename), COPY_ATTRIBUTES);
+//                    Files.copy(pFile, Paths.get(workspace.getPath(), filename), COPY_ATTRIBUTES);
+                    Files.move(pFile, Paths.get(workspace.getPath(), filename));
                     File inputFile = new File(workspace, filename);
                     inputFile.setReadable(true);
                     inputFile.setExecutable(true);
