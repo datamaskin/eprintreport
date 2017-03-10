@@ -30,6 +30,7 @@ package edu.tamu.compassreport;
  * =============================================================================
  */
 
+import java.awt.*;
 import java.nio.charset.Charset;
 import java.sql.*;
 import java.io.*;
@@ -42,6 +43,8 @@ import java.util.regex.Pattern;
 // java.sql.Blob which Oracle does implement. The oracle.sql.BLOB class
 // provided by Oracle does offer better performance and functionality.
 
+import com.cedarsoftware.util.ByteUtilities;
+import com.cedarsoftware.util.Converter;
 import oracle.sql.*;
 
 // Needed for Oracle JDBC Extended Classes
@@ -681,6 +684,27 @@ public class BLOBFile {
         }
     }
 
+    public byte[] getBLOB(int id) throws Exception {
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        String query = "select gw_rpts_blob, gw_rpts_mime FROM gw_rpts WHERE gw_rpts_sequence = ?";
+        try {
+
+            pstmt = conn.prepareStatement(query);
+            pstmt.setInt(1, id);
+            rs = pstmt.executeQuery();
+            rs.next();
+            Blob blob = rs.getBlob("gw_rpts_blob");
+            // materialize BLOB onto client
+            return blob.getBytes(1, (int) blob.length());
+        } finally {
+            rs.close();
+            pstmt.close();
+            conn.close();
+        }
+    }
+
     /**
      * Sole entry point to the class and application.
      * @param args Array of string arguments passed in from the command-line.
@@ -715,6 +739,17 @@ public class BLOBFile {
                 }
 
                 blobFile.readBLOBToFileGet(seq);
+                try {
+                    byte[] b = blobFile.getBLOB(Integer.parseInt(seq));
+//                    String encodedBytes = ByteUtilities.encode(b);
+                    String[] strings = new String(b, "UTF-8").split("\n");
+                    for (String s : strings) {
+                        System.out.println(s);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 //                blobFile.splitFile(blobFile.inputBinaryFileName);
 
 //                blobFileExample.writeBLOBStream();
