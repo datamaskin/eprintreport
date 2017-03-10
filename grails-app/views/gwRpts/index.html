@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    <style type="text/css">
+        html {
+            font-family: 'Helvetica-Neue', 'Helvetica', 'Arial';
+        }
+    </style>
+        <title>Download File</title>
+    </head>
+    <body>
+    <a href="javascript:onLoad();">Load a File!</a>
+    <div id="textfile"></div>
+    <input type="file" id="fileInput" onchange="handleFiles(this.files)" style="visibility:hidden;position:absolute;top:0;left:0"/>
+    </body>
+    <script>
+        var content = null;
+        function onLoad() {
+            id('fileInput').click();
+        }
+
+        function handleFiles(files) {
+            var file = files[0];
+            var reader = new FileReader();
+            reader.onload = onFileReadComplete;
+            content = reader.readAsText(file);
+        }
+
+        function onFileReadComplete(event) {
+            console.debug(content);
+        }
+    </script>
+</html>
