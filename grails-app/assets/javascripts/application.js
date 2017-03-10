@@ -86,6 +86,30 @@ if (typeof jQuery !== 'undefined') {
         });
     }
 
+    function saveZIP(filename) {
+        console.debug("saveZIP: ", filename);
+        return $.ajax({
+            url: "/EprintReport/saveZIP",
+            data: {
+                filename: filename
+            }
+        }).success(function( filename ) {
+            if ( console && console.log ) {
+                console.debug( "saveZIP success filename:", filename);
+            }
+        }).fail(function (filename) {
+            if (console && console.log) {
+                console.debug("saveZIP failed for filename:", filename);
+            }
+        }).error(function (xhr, ajaxOptions, thrownError){
+            if(xhr.status==404) {
+                alert(thrownError);
+            }
+        }).complete(function (filename) {
+            console.debug("saveZIP complete filename:", filename.responseText);
+        });
+    }
+
     function getDoc(filename) {
         console.debug("getDoc:", filename);
         var mime = filename.split('.');
@@ -119,10 +143,19 @@ if (typeof jQuery !== 'undefined') {
             }
         }).complete(function (data) {
             // console.debug("Doc complete data: ", data.responseText, filename);
-            if (mime[1].toLowerCase() != 'xls')
-                showDoc(data, filename);
-            else
-                saveXls(data, filename);
+            // showDoc(data, filename);
+            switch (mime[1].toLowerCase()) {
+                case 'xls' : showDoc(data, filename);
+                    break;
+                case 'csv' : showDoc(data, filename);
+                    break;
+                case 'lis' :
+                case 'log' :
+                case 'txt' : showDoc(data, filename);
+                    break;
+                case 'pdf' : showDoc(data, filename);
+                    break;
+            }
         });
 
     }
@@ -154,16 +187,13 @@ if (typeof jQuery !== 'undefined') {
     }
 
     function saveTxt(data, fileName) {
-        var txt = data.responseText;
+        var txt = data;
 
-        /*$.each(txt, function (index, value) {
-            console.debug(index + ": " + value);
-        })*/
         (function () {
 
             // saving text file
             var blob = new Blob([txt], {type: "text/plain"});
-
+            // var blob = new Blob([txt], {type: "application/zip"});
             saveAs(blob, fileName);
         })();
 
@@ -183,11 +213,9 @@ if (typeof jQuery !== 'undefined') {
             }
             var byteArray = new Uint8Array(byteNumbers);
 
-            // now that we have the byte array, construct the blob from it
             // var blob1 = new Blob([byteArray], {type: "application/octet-stream"});
             var blob1 = new Blob([byteArray], {type: "application/pdf"});
 
-            // fileName1 = "cool.gif";
             saveAs(blob1, fileName1);
 
         })();
@@ -209,6 +237,15 @@ if (typeof jQuery !== 'undefined') {
                     modal: true,
                     buttons: {
                         "View": function() {
+                            var filelist;
+                            /*if (data.readyState == 4 && data.status == 200 && data.responseText.length > 0) {
+                                filelist = data.responseText;
+                                var files = JSON.parse(filelist)
+                                $(files).each(function (index, elem) {
+                                    console.debug(elem);
+                                    // call to new JS function similar to controller upload
+                                })
+                            }*/
                             win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
                             win.document.location.href = datauri;
                             runExecApp(fileName);
@@ -226,7 +263,8 @@ if (typeof jQuery !== 'undefined') {
                 break;
             case 'lis' :
             case 'txt' :
-            case 'log' : datauri = 'data:text/plain,' 	+ data.responseText;
+            case 'log' :
+                datauri = 'data:text/plain,' 	+ data.responseText;
                 $("<div>View "+fileName+" in new window?<br/>Or save file?</div>").dialog({
                     modal: true,
                     buttons: {
@@ -239,7 +277,9 @@ if (typeof jQuery !== 'undefined') {
                             $(this).dialog("close");
                         },
                         "Save": function() {
-                            saveTxt(data, fileName);
+                            // saveZIP(fileName);
+                            saveTxt(data.responseText, fileName);
+                            // saveTxt(data.responseText, "599.txt.zip");
                             runExecApp(fileName);
                             $(this).dialog("close");
                         }
@@ -255,11 +295,40 @@ if (typeof jQuery !== 'undefined') {
                             win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
                             win.document.location.href = datauri;
                             runExecApp(fileName);
+                            runExecApp(mime[0]+'.xls');
+                            runExecApp(mime[0]+'.html');
                             $(this).dialog("close");
                         },
                         "Save": function() {
                             getDoc(mime[0]+".xls");
+                            // saveXls(data, fileName);
                             runExecApp(fileName);
+                            // runExecApp(mime[0]+'.xls');
+                            // runExecApp(mime[0]+'.html');
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+                break;
+
+            case 'xls' : datauri = 'data:application/vnd.ms-excel;base64,' 	+ data.responseText;
+                $("<div>View "+fileName+" in new window<br/>Or save file?</div>").dialog({
+                    modal: true,
+                    buttons: {
+                        "View": function() {
+                            win = window.open("", fileName, "width=1024,height=768,resizable=yes,scrollbars=yes,toolbar=yes,location=yes,directories=yes,status=yes,menubar=yes,copyhistory=no,dependent=yes");
+                            win.document.location.href = datauri;
+                            runExecApp(fileName);
+                            runExecApp(mime[0]+'.xls');
+                            runExecApp(mime[0]+'.html');
+                            $(this).dialog("close");
+                        },
+                        "Save": function() {
+                            saveXls(data, fileName);
+                            runExecApp(fileName);
+                            runExecApp(mime[0]+'.xls');
+                            runExecApp(mime[0]+'.html');
                             $(this).dialog("close");
                         }
                     }
@@ -275,7 +344,8 @@ if (typeof jQuery !== 'undefined') {
 			var container = $('<div>Loading...</div>');
 
 			var blobprom = $.ajax( {
-				url: '/EprintReport/gwrptsSNB',
+				// url: '/EprintReport/gwrptsSNB',
+                url: '/EprintReport/reportInfoJSON',
 				data: {
 					name: row.data()[1]
 				},
