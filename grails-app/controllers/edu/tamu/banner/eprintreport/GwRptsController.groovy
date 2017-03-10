@@ -1,5 +1,7 @@
 package edu.tamu.banner.eprintreport
 
+import com.cedarsoftware.util.Converter
+import com.google.gson.Gson
 import edu.tamu.compassreport.CsvXls
 import edu.tamu.compassreport.SystemCommandProcessor
 import edu.tamu.compassreport.ToHtml
@@ -9,8 +11,6 @@ import org.apache.commons.io.monitor.FileEntry
 import org.apache.commons.lang.SystemUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
-
-import java.sql.Blob
 
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
@@ -33,12 +33,13 @@ class GwRptsController {
 
         byte[] b = compassReportsService.getGwRptsBlobPDFBytes(bigint)
 
-        response.setHeader("Expires","0")
+        /*response.setHeader("Expires","0")
         response.setHeader("Content-disposition", "attachment; filename=file.pdf")
         response.setContentType("application/pdf")
         response.setContentLength(b.length)
         response.getOutputStream().write(b)
-        response.getOutputStream().flush()
+        response.getOutputStream().flush()*/
+        respond gwRptsInstance
 
     }
 
@@ -104,6 +105,11 @@ class GwRptsController {
         blob
     }
 
+    def gwrptsReportInfoJSON(final String name) {
+        def reports = compassReportsService.getReportInfoJSON(name)
+        render reports
+    }
+
     def writeBlob(String filename) {
 
         def tok = filename.tokenize(".")
@@ -124,20 +130,32 @@ class GwRptsController {
     def upload(String fileName) { //gwrptsFileUpload @controller
 
         log.debug "upload: ${fileName}"
+
+        def (name, mime, ndx) = fileName.tokenize('.')
+
         def location = "/"+grailsApplication.config.EprintReport.file.storage.location
 
-        def input = null
         def paths = servletContext.getResourcePaths(location)
         def extdig = ~/^.+\.\d+$/
+        def filepath = new LinkedHashMap(paths.size())
+        def newpath = new ArrayList(paths.size())
+        def index = 0
+        filepath.put(index, name+"."+mime)
+        newpath.add(name+"."+mime)
 
-        def newpath = []
         for (path in paths) {
-            if (extdig.matcher(path).matches())
-                newpath.add(path.split("/")[3])
+            if (extdig.matcher(path).matches()) {
+                def len = path.split("/").length
+                def str = path.split("/")[len-1]
+                len = str.split("\\.").length
+                def idx = str.split("\\.")[len-1]
+                index = (int)Converter.convert(idx, Integer.class)
+                newpath.add(str)
+                filepath.put(index, str)
+            }
         }
 
         paths.each {
-            log.debug "path: ${it}"
             println "path ${it}"
         }
 
@@ -145,12 +163,14 @@ class GwRptsController {
             println "newpath ${it}"
         }
 
-        def fileinput = []
+        filepath.eachWithIndex { fileitem, i ->
+//            println "Key: ${fileitem.key} has value: ${fileitem.value}"
+            newpath.set((int)Converter.convert(fileitem.key, Integer.class), fileitem.value)
+        }
 
         def realpath = servletContext.getRealPath(location)
 
-        def (name, mime) = fileName.tokenize('.')
-
+        def input = null
 
         switch (mime.toLowerCase()) {
             case 'pdf' :
@@ -159,26 +179,21 @@ class GwRptsController {
             case 'lis' :
             case 'txt' :
             case 'log' :
-                        /*def filedata = new ArrayList<String>()
-                        InputStream inputStream
-                        for (path in newpath) {
-                            inputStream = new FileInputStream(realpath+"/"+path)
-                            filedata.add(inputStream.getText('UTF-8'))
-                        }*/
 
+//                        input = newpath
+                        /*Gson gson = new Gson()
+                        input = gson.toJson(newpath)*/
 //                        InputStream inputStream = new FileInputStream(realpath+"/"+fileName)
                         input = servletContext.getResourceAsStream(location + "/" + fileName).getText('UTF-8')
-                        /*def output = [:]
-                        JSON.registerObjectMarshaller(GwRpts) {
-                            output['seq'] = it.seq
-                            output['gwRptsBlob'] = it.gw_rpts_blob
-                            return output
-                        }
-                        GwRpts gwRpts = new GwRpts()
-                        byte[] fileData = servletContext.getResourceAsStream(location + "/" + fileName).getBytes()
-                        Blob blob = new javax.sql.rowset.serial.SerialBlob(fileData);
-                        gwRpts.gwRptsBlob = blob
-                        input = gwRpts.gwRptsBlob*/
+//                        def file = new java.io.File(realpath + "/" + fileName)
+//                        response.setContentType("APPLICATION/OCTET-STREAM")
+//                        response.setHeader("Content-Disposition", "Attachment;Filename=\"${fileName}\"")
+//                        file.withInputStream { response.outputStream << it }
+
+//                        download(fileName, input)
+                        /*BigDecimal seq = (BigDecimal)Converter.convert(name, BigDecimal.class)
+                        GwRpts gwRpts = GwRpts.findByGwRptsSequence(seq)
+                        input = gwRpts*/
 
                 break
             case 'csv' :
@@ -196,15 +211,24 @@ class GwRptsController {
                         input = inputStream.getBytes().encodeAsBase64()
                 break
         }
-
         render input
+    }
+
+    def saveZIP(String filename) {
+//        render(template: "_downloader", filename)
+        render(file: new File("/Users/datamaskinaggie/dev/grails/eis/eprintreport/web-app/WEB-INF/files/"+filename), fileName: filename, contentType: "text/plain", view: "downloader")
     }
 
     def execApp(String fileName) {
 
+        /*Gson gson = new Gson()
+        def filenames =  gson.fromJson(fileName, String[].class)
+        def fn = filenames.toString()
+        println fn*/
         def temppath =  "/"+grailsApplication.config.EprintReport.file.storage.location
-        def cmdpath = "/bin/"
-        def winpath = "C:/Windows/Systems32/"
+        def cmdpath = grailsApplication.config.EprintReport.command.path
+        def winpath = grailsApplication.config.EprintReport.windows.path
+
         SystemCommandProcessor scp = new SystemCommandProcessor()
         log.debug "execApp: ${fileName}"
 
@@ -216,7 +240,7 @@ class GwRptsController {
 
         def realpath = servletContext.getRealPath(temppath)
 
-        def (name, mime) = fileName.tokenize('.')
+//        def (name, mime) = fileName.tokenize('.')
 
         File[] appFiles = null
 
@@ -249,6 +273,7 @@ class GwRptsController {
         scp.commands.add(appFiles[0].name)
         scp.setCommands(scp.commands)
         scp.processContent(realpath+"/"+fileName)
+//        scp.processContent(realpath+"/599.txt.zip")
 
         scp
     }
