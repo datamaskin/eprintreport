@@ -71,21 +71,10 @@ grails.project.dependency.resolution = {
         // The DB rev eng tool
         compile "org.grails.plugins:db-reverse-engineer:4.0.0"
 
-        // REST builder
-        compile ':rest-client-builder:2.1.1'
-
-
-        // Filterpane
-//        compile "org.grails.plugins:filterpane:2.5.0"
-
         compile "org.grails.plugins:grails-datatables:0.7"
         runtime ':twitter-bootstrap:3.3.5'
-        compile ":restful-api:1.0.0"
 
-        compile ":inflector:0.2"
-        compile ":cache-headers:1.1.7"
-
-        test ":funky-spock:0.2.1"
+        compile "org.grails.plugins:marshallers:0.7"
 
         // Uncomment these to enable additional asset-pipeline capabilities
         //compile ":sass-asset-pipeline:1.9.0"
