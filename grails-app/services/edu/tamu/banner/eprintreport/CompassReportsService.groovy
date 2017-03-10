@@ -1,11 +1,15 @@
 package edu.tamu.banner.eprintreport
 
+import com.google.gson.Gson
 import edu.tamu.compassreport.BLOBFile
 import edu.tamu.compassreport.ReadBlob
 import grails.converters.JSON
 import grails.transaction.Transactional
+import grails.util.Holders
+import groovy.json.JsonSlurper
 import groovy.sql.Sql
 import org.apache.log4j.Logger
+import org.springframework.context.ApplicationContext
 
 import javax.sql.DataSource
 import java.sql.Blob
@@ -40,14 +44,18 @@ class CompassReportsService {
         log.debug("getCompassReportsAsJSON: ${name}")
 
         def stmt = """
-                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name, gw_rpts_create_date from gw_rpts where gw_rpts_object_name = :aName
+                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name, gw_rpts_create_date from gw_rpts_all where gw_rpts_object_name = :aName
                     """
+
+        /*def stmt =  """
+                    select BANINST1.GWK_COMPASS_REPORTS.F_GET_REPORT_INFO(:aName) from dual
+                    """*/
 
         final params = [aName: name]
 
-        final results = sql.rows(stmt, params) as JSON
+        final results = sql.rows(stmt, params)
         log.debug "getCompassReportsAsJSON: ${results}"
-        results
+        results as JSON
     }
 
     def getGwRptsBlobAsJSON(final BigInteger seq) {
@@ -95,15 +103,6 @@ class CompassReportsService {
         }
     }
 
-    /*def writeBlobToFile(final BigDecimal seq, WriteBlob writeBlob = null) {
-        def location = grailsApplication.config.EprintReport.file.storage.location
-        writeBlob.setDataSource(dataSource)
-        writeBlob.setLocation(location)
-        def numbytes = writeBlob.writeBlob(seq)
-        log.debug "writeBlobToFile: ${seq} ${location} ${numbytes}"
-        numbytes
-    }*/
-
     def writeBlobToFile(final String fileName) {
         def location = "/"+grailsApplication.config.EprintReport.file.storage.location
         def path = grailsApplication.mainContext.getResource(location).file
@@ -122,7 +121,34 @@ class CompassReportsService {
         b
     }
 
-    def readBlobToJSON() {
+    def getReportInfoJSON(String name){
+        String jsontext
+        def reportjson = null
 
+        try {
+            def sessionFactory
+            if (!sessionFactory) {
+                ApplicationContext ctx = (ApplicationContext) Holders.grailsApplication.getMainContext()
+                log.debug("$ctx")
+                sessionFactory = ctx.getBean('sessionFactory')
+            }
+            log.debug("$sessionFactory")
+
+            def sql = new Sql(sessionFactory.getCurrentSession().connection())
+            log.debug("$sql -- GWK_COMPASS_REPORTS.F_GET_REPORT_INFO call --")
+
+            def stmt = '{call ? := GWK_COMPASS_REPORTS.F_GET_REPORT_INFO(?)}'
+            def params = [Sql.VARCHAR, name]
+
+            sql.call( stmt, params, { it ->
+                jsontext = it
+            })
+
+            reportjson = new JsonSlurper().parseText(jsontext)
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+        reportjson
     }
 }
