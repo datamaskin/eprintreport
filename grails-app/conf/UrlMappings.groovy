@@ -40,6 +40,14 @@ class UrlMappings {
             controller = "gwRpts"
             action = "execApp"
         }
+        "/saveZIP" {
+            controller = "gwRpts"
+            action = "saveZIP"
+        }
+        "/reportInfoJSON" {
+            controller = "gwRpts"
+            action = "getReportInfoJSON"
+        }
 
         // Mappings supported by resource-specific controllers
         // should be added before the default mapping used for
