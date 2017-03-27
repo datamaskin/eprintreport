@@ -5,6 +5,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder
 
 class GwRptsUser implements Serializable {
 
+	static mapWith = "none"
+
 	String gwRptsUserUsername
 	String gwRptsUserObjectAccessed
 	Integer gwRptsUserPidm
