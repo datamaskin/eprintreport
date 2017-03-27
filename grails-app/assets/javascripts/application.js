@@ -344,8 +344,7 @@ if (typeof jQuery !== 'undefined') {
 			var container = $('<div>Loading...</div>');
 
 			var blobprom = $.ajax( {
-				// url: '/EprintReport/gwrptsSNB',
-                url: '/EprintReport/reportInfoJSON',
+				url: '/EprintReport/gwrptsSNB',
 				data: {
 					name: row.data()[1]
 				},
