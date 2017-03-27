@@ -1,0 +1,8 @@
+[{
+  "class": "edu.tamu.banner.eprintreport.GwRpts",
+  "id": null,
+  "gwRptsCreateDate": "2016-11-29T15:49:55Z",
+  "gwRptsSequence": 634,
+  "gwRptsDefObjectName": "SFRFEES",
+  "gwRptsBlob": {"binaryStream":{"class":"oracle.jdbc.driver.OracleBlobInputStream"}}
+}]
