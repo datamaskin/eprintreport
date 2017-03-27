@@ -7,7 +7,9 @@ import grails.converters.JSON
 import grails.transaction.Transactional
 import grails.util.Holders
 import groovy.json.JsonSlurper
+import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
+import oracle.sql.CLOB
 import org.apache.log4j.Logger
 import org.springframework.context.ApplicationContext
 
@@ -21,6 +23,8 @@ class CompassReportsService {
     def sessionFactory
     def log = Logger.getLogger(this.getClass())
     def grailsApplication
+    def groovySql
+
 
     def  getStudentPidmUIN(final String UIN) { // Fetch student PIDM using UIN
 
@@ -43,9 +47,15 @@ class CompassReportsService {
 
         log.debug("getCompassReportsAsJSON: ${name}")
 
+        // H2 db
         def stmt = """
-                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name, gw_rpts_create_date from gw_rpts_all where gw_rpts_object_name = :aName
+                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name, gw_rpts_create_date from gw_rpts where gw_rpts_object_name = :aName
                     """
+
+        // Oracle
+        /*def stmt = """
+                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name, gw_rpts_create_date from gw_rpts_all where gw_rpts_object_name = :aName
+                    """*/
 
         /*def stmt =  """
                     select BANINST1.GWK_COMPASS_REPORTS.F_GET_REPORT_INFO(:aName) from dual
@@ -55,15 +65,52 @@ class CompassReportsService {
 
         final results = sql.rows(stmt, params)
         log.debug "getCompassReportsAsJSON: ${results}"
-        results as JSON
+//        results as JSON
+        results
+    }
+
+    def getCompassReportsAsJSON() {
+        final Sql sql = new Sql(dataSource: dataSource)
+
+        log.debug("getCompassReportsAsJSON all reports")
+
+        // H2 db
+        def stmt =  """
+                    select gw_rpts_def_object_name, gw_rpts_def_object_desc, gw_rpts_def_retention_days, gw_rpts_def_activity_date from gw_rpts_def
+                    """
+        /*def stmt = """
+                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name, gw_rpts_create_date from gw_rpts
+                    """*/
+
+        // Oracle
+        /*def stmt = """
+                    select gw_rpts_sequence, gw_rpts_mime, gw_rpts_object_name, gw_rpts_create_date from gw_rpts_all where gw_rpts_object_name = :aName
+                    """*/
+
+        /*def stmt =  """
+                    select BANINST1.GWK_COMPASS_REPORTS.F_GET_REPORT_INFO(:aName) from dual
+                    """*/
+
+        // This must be uncommented for the report name version.
+//        final params = [aName: name]
+
+        final results = sql.rows(stmt)
+
+        log.debug "getCompassReportsAsJSON: ${results}"
+//        results as JSON
+        results
+        /*Gson gson = new Gson()
+        def json = gson.toJson(results)
+        assert json
+        json*/
     }
 
     def getGwRptsBlobAsJSON(final BigInteger seq) {
         final session = sessionFactory.currentSession
         final String query = """
-                                select gw_rpts_object_name, gw_rpts_mime, gw_rpts_blob
-                                from gw_rpts inner join gw_rpts_def
-                                on gw_rpts.gw_rpts_sequence = :seq
+                                select gw_rpts_sequence, gw_rpts_object_name, gw_rpts_mime, gw_rpts_blob
+                                from gw_rpts
+                                where gw_rpts.gw_rpts_sequence = :seq
                               """
         final sqlQuery = session.createSQLQuery(query)
         final queryResults = sqlQuery.with {
@@ -75,6 +122,7 @@ class CompassReportsService {
         }
 
         results as JSON
+//        results
     }
 
     def getGwRptsBlobPDFBytes(BigDecimal seq) {
@@ -150,5 +198,38 @@ class CompassReportsService {
             e.printStackTrace()
         }
         reportjson
+    }
+
+     def getReportDefJSON(){
+        String jsontext
+        List reportjson = null
+
+        try {
+            def sessionFactory
+            if (!sessionFactory) {
+                ApplicationContext ctx = (ApplicationContext) Holders.grailsApplication.getMainContext()
+                log.debug("$ctx")
+                sessionFactory = ctx.getBean('sessionFactory')
+            }
+            log.debug("$sessionFactory")
+
+            def sql = new Sql(sessionFactory.getCurrentSession().connection())
+            log.debug("$sql -- GWK_COMPASS_REPORTS.F_GET_RPTS_DEF call --")
+
+            def stmt = "{${Sql.VARCHAR} = call GWK_COMPASS_REPORTS.F_GET_RPTS_DEF}"
+
+
+
+            sql.call( stmt, { it ->
+                jsontext = it
+            })
+
+            reportjson = new JsonSlurper().parseText(jsontext)
+        }
+        catch (Exception e) {
+            e.printStackTrace()
+        }
+        reportjson
+//         jsontext
     }
 }
