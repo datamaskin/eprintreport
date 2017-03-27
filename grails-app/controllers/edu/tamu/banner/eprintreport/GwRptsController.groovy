@@ -82,6 +82,7 @@ class GwRptsController {
         log.debug "gwrptsSeqNameBlob: ${name}"
 
         def gwrpts = compassReportsService.getCompassReportsAsJSON(name)
+//        def gwrpts = compassReportsService.getCompassReportsAsJSON()
         render gwrpts
     }
 
