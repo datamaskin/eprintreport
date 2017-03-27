@@ -4,6 +4,8 @@ import java.sql.Blob
 
 class GwRpts {
 
+	static mapWith = "none"
+
 	BigDecimal gwRptsSequence
 	String gwRptsObjectName
 	String gwRptsSid
