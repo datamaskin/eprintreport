@@ -18,3 +18,6 @@ most cases
 * Grails Groovy uses Java SQL and not Oracle SQL therefor leading to package access permissions exceptions when attempting to render as JSON.
 * TODO - should look into to upgrading to Grails 3.x to take advantages of Spring Boot features and the new fat jar
 capabilities
+* Demo of CompassReports/Eprint to MH produces new requirements:
+    * Removing GORM from GwRpts domain to allow the consumption of JSON from PL/SQL pkg function execution.
+    * Implementing zip.js library to download a .zip file instead of jslib.js.
