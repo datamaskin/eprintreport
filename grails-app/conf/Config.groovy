@@ -5,9 +5,9 @@
 grails.config.locations = [ /*"classpath:${appName}-config.properties",
                              "classpath:${appName}-config.groovy",
                              "file:${userHome}/.grails/${appName}-config.properties",
-                             "file:${userHome}/.grails/${appName}-config.groovy"*/
+                             "file:${userHome}/.grails/${appName}-config.groovy"
                              "file:${userHome}/.grails/${appName}_configuration.groovy",
-                             "file:${userHome}/.grails/${appName}_datasource.groovy"
+                             "file:${userHome}/.grails/${appName}_datasource.groovy"*/
  ]
 
 // if (System.properties["${appName}.config.location"]) {
@@ -116,11 +116,13 @@ environments {
 log4j.main = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
-    debug 'grails.plugin.databasemigration', 'liquibase'
-    debug 'grails.plugin.reveng'
+    appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    }
+
+//    debug 'grails.plugin.databasemigration', 'liquibase'
+//    debug 'grails.plugin.reveng'
+    debug 'edu.tamu.banner.eprintreport'
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
@@ -134,3 +136,5 @@ log4j.main = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+//log4j.logger.grails.app.filters='debug'
+
