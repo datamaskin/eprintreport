@@ -6,6 +6,8 @@ import org.apache.commons.lang.builder.HashCodeBuilder
 
 class GwRptsGtt implements Serializable {
 
+	static mapWith = "none"
+
 	BigDecimal gwRptsGttSequence
 	String gwRptsGttObjectName
 	String gwRptsGttSid
