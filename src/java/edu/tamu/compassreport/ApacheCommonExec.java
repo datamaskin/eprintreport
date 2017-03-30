@@ -4,17 +4,9 @@ package edu.tamu.compassreport;
  * Created by datamaskinaggie on 2/8/17.
  */
 
-import org.apache.commons.exec.*;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import org.apache.commons.exec.CommandLine;
-
 public class ApacheCommonExec {
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         CommandLine commandLine = new CommandLine("ping");
         commandLine.addArgument("-c");
@@ -32,6 +24,7 @@ public class ApacheCommonExec {
                     System.out.println(line);
                 }
             };
+
 //            ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
             ExecuteWatchdog watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
             PumpStreamHandler streamHandler = new PumpStreamHandler(output);
@@ -50,5 +43,5 @@ public class ApacheCommonExec {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-    }
+    }*/
 }
