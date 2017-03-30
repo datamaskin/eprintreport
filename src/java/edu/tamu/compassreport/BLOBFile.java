@@ -30,11 +30,9 @@ package edu.tamu.compassreport;
  * =============================================================================
  */
 
-import java.awt.*;
-import java.nio.charset.Charset;
-import java.sql.*;
+import javax.sql.DataSource;
 import java.io.*;
-
+import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,19 +40,9 @@ import java.util.regex.Pattern;
 // classes. Keep in mind that we could have included Java's JDBC interfaces
 // java.sql.Blob which Oracle does implement. The oracle.sql.BLOB class
 // provided by Oracle does offer better performance and functionality.
-
-import com.cedarsoftware.util.ByteUtilities;
-import com.cedarsoftware.util.Converter;
-import oracle.sql.*;
-
+//import oracle.sql.*;
 // Needed for Oracle JDBC Extended Classes
-import oracle.jdbc.*;
-
-import javax.sql.DataSource;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+//import oracle.jdbc.*;
 
 
 
@@ -243,7 +231,8 @@ public class BLOBFile {
         String              sqlText                 = null;
         Statement           stmt                    = null;
         ResultSet           rset                    = null;
-        BLOB                image                   = null;
+//        BLOB                image                   = null;
+        Blob                image                   = null;
         int                 chunkSize;
         byte[]              binaryBuffer;
         long                position;
@@ -271,14 +260,16 @@ public class BLOBFile {
                             "FOR UPDATE";
             rset = stmt.executeQuery(sqlText);
             rset.next();
-            image = ((OracleResultSet) rset).getBLOB("image");
-
-            chunkSize = image.getChunkSize();
+//            image = ((OracleResultSet) rset).getBLOB("image");
+            image = rset.getBlob("image");
+//            chunkSize = image.getChunkSize();
+            chunkSize = (int)image.length();
             binaryBuffer = new byte[chunkSize];
 
             position = 1;
             while ((bytesRead = inputFileInputStream.read(binaryBuffer)) != -1) {
-                bytesWritten = image.putBytes(position, binaryBuffer, bytesRead);
+//                bytesWritten = image.putBytes(position, binaryBuffer, bytesRead);
+                bytesWritten = image.setBytes(position, binaryBuffer);
                 position        += bytesRead;
                 totbytesRead    += bytesRead;
                 totbytesWritten += bytesWritten;
@@ -329,14 +320,15 @@ public class BLOBFile {
         String              sqlText                     = null;
         Statement           stmt                        = null;
         ResultSet           rset                        = null;
-        BLOB                lob                         = null;
+//        BLOB                lob                         = null;
+        Blob                lob                         = null;
         String              mime                        = null;
         long                blobLength;
         long                position;
         int                 chunkSize;
         byte[]              binaryBuffer;
-        int                 bytesRead                   = 0;
         int                 bytesWritten                = 0;
+        int                 bytesRead                   = 0;
         int                 totbytesRead                = 0;
         int                 totbytesWritten             = 0;
 
@@ -360,11 +352,13 @@ public class BLOBFile {
             sqlText = "select gw_rpts_blob, gw_rpts_mime FROM gw_rpts WHERE gw_rpts_sequence = '" + seq + "'";
             rset = stmt.executeQuery(sqlText);
             rset.next();
-            lob = ((OracleResultSet) rset).getBLOB("GW_RPTS_BLOB");
+//            lob = ((OracleResultSet) rset).getBLOB("GW_RPTS_BLOB");
+            lob = rset.getBlob("GW_RPTS_BLOB");
             mime = rset.getString("GW_RPTS_MIME");
 
             blobLength = lob.length();
-            chunkSize = lob.getChunkSize();
+//            chunkSize = lob.getChunkSize();
+            chunkSize = (int)lob.length();
 
             binaryBuffer = new byte[chunkSize];
 
@@ -389,7 +383,9 @@ public class BLOBFile {
                 // Loop through while reading a chunk of data from the BLOB
                 // column using the getBytes() method. This data will be stored
                 // in a temporary buffer that will be written to disk.
-                bytesRead = lob.getBytes(position, chunkSize, binaryBuffer);
+//                bytesRead = lob.getBytes(position, chunkSize, binaryBuffer);
+//                bytesRead = lob.getBytes(position, chunkSize);
+                binaryBuffer = lob.getBytes(position, chunkSize);
                 /*if (position == 1) {
                     outputFileOutputStream.write(htmlbytes, 0, htmlbytes.length);
                     outputFileOutputStream.write(binaryBuffer, 0, bytesRead);
@@ -456,7 +452,8 @@ public class BLOBFile {
         String              sqlText                 = null;
         Statement           stmt                    = null;
         ResultSet           rset                    = null;
-        BLOB                image                   = null;
+//        BLOB                image                   = null;
+        Blob                image                   = null;
         int                 bufferSize;
         byte[]              byteBuffer;
         int                 bytesRead               = 0;
@@ -483,9 +480,10 @@ public class BLOBFile {
                             "FOR UPDATE";
             rset = stmt.executeQuery(sqlText);
             rset.next();
-            image = ((OracleResultSet) rset).getBLOB("image");
-
-            bufferSize = image.getBufferSize();
+//            image = ((OracleResultSet) rset).getBLOB("image");
+            image = rset.getBlob("image");
+//            bufferSize = image.getBufferSize();
+            bufferSize = (int) image.length();
 
             // Notice that we are using an array of bytes. This is required
             // since we will be streaming the content (to either a CLOB or BLOB)
@@ -496,7 +494,8 @@ public class BLOBFile {
             // ASCII text file that would be sent to a CLOB.
             byteBuffer = new byte[bufferSize];
 
-            blobOutputStream = image.getBinaryOutputStream();
+//            blobOutputStream = image.getBinaryOutputStream();
+            blobOutputStream = image.setBinaryStream(1024);
 
             while ((bytesRead = inputFileInputStream.read(byteBuffer)) != -1) {
 
@@ -565,7 +564,8 @@ public class BLOBFile {
         String              sqlText                     = null;
         Statement           stmt                        = null;
         ResultSet           rset                        = null;
-        BLOB                image                       = null;
+//        BLOB                image                       = null;
+        Blob                image                       = null;
         int                 chunkSize;
         byte[]              binaryBuffer;
         int                 bytesRead                   = 0;
@@ -587,14 +587,16 @@ public class BLOBFile {
                             "FOR UPDATE";
             rset = stmt.executeQuery(sqlText);
             rset.next();
-            image = ((OracleResultSet) rset).getBLOB("image");
+//            image = ((OracleResultSet) rset).getBLOB("image");
+            image = rset.getBlob("image");
 
             // Will use a Java InputStream object to read data from a BLOB (can
             // also be used for a CLOB) object. In this example, we will use an
             // InputStream to read data from a BLOB.
             blobInputStream = image.getBinaryStream();
 
-            chunkSize = image.getChunkSize();
+//            chunkSize = image.getChunkSize();
+            chunkSize = (int) image.length();
             binaryBuffer = new byte[chunkSize];
 
             while ((bytesRead = blobInputStream.read(binaryBuffer)) != -1) {
