@@ -9,7 +9,7 @@ import grails.util.Holders
 import groovy.json.JsonSlurper
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
-import oracle.sql.CLOB
+//import oracle.sql.CLOB
 import org.apache.log4j.Logger
 import org.springframework.context.ApplicationContext
 
