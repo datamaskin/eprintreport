@@ -124,9 +124,9 @@ class GwRptsDefController {
         resultMap.recordsTotal = jList.size()
         resultMap.recordsFiltered = jList.size()
 
-        resultMap.data = [[gwRptsDef.gwRptsDefObjectName.get(0), gwRptsDef.gwRptsDefObjectDesc.get(0), gwRptsDef.gwRptsDefRetentionDays.get(0), gwRptsDef.gwRptsDefActivityDate.get(0)]]
+        resultMap.data = [[null, gwRptsDef.gwRptsDefObjectName.get(0), gwRptsDef.gwRptsDefObjectDesc.get(0), gwRptsDef.gwRptsDefRetentionDays.get(0), gwRptsDef.gwRptsDefActivityDate.get(0)]]
         for (int i = 1; i < resultMap.recordsTotal; i++) {
-            resultMap.data += [[gwRptsDef.gwRptsDefObjectName.get(i), gwRptsDef.gwRptsDefObjectDesc.get(i), gwRptsDef.gwRptsDefRetentionDays.get(i), gwRptsDef.gwRptsDefActivityDate.get(i)]]
+            resultMap.data += [[null, gwRptsDef.gwRptsDefObjectName.get(i), gwRptsDef.gwRptsDefObjectDesc.get(i), gwRptsDef.gwRptsDefRetentionDays.get(i), gwRptsDef.gwRptsDefActivityDate.get(i)]]
         }
         /*resultMap.data = [
                 gwRptsDef.gwRptsDefObjectName,
