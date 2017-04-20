@@ -1,7 +1,7 @@
 package edu.tamu.compassreport;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.impl.Log4JLogger;
+//import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.impl.Log4JLogger;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
