@@ -15,10 +15,16 @@
     <asset:javascript src="application.js"/>
     <asset:javascript src="jquery-ui-1.12.1.custom"/>
     <asset:stylesheet src="eprintreport.css" />
-    <asset:stylesheet src="grails-datatables.css"/>
-    <asset:stylesheet src="grails-datatables-jqueryui.css"/>
-    <asset:javascript src="grails-datatables.js"/>
-    <asset:javascript src="grails-datatables-jqueryui.js"/>
+    <link rel="stylesheet" href="/EprintReport/css/grails-datatables.css">
+    <link rel="stylesheet" href="/EprintReport/css/jquery-ui/jquery-ui.css">
+    <link rel="stylesheet" href="/EprintReport/css/dataTables.jqueryui.css">
+    %{--<link rel="stylesheet" href="/EprintReport/css/jquery.qtip.css">--}%
+    <g:javascript library="jquery" plugin="jquery"/>
+    <script type="text/javascript" src="/EprintReport/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="/EprintReport/js/dataTables.fullNumbersCallback.js"></script>
+    <script type="text/javascript" src="/EprintReport/js/jquery-ui.js"></script>
+    <script type="text/javascript" src="/EprintReport/js/dataTables.jqueryui.js"></script>
+    %{--<script type="text/javascript" src="/EprintReport/js/jquery.qtip.js"></script>--}%
     <g:layoutHead/>
 </head>
 <body>

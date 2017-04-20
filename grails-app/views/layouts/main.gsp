@@ -9,11 +9,12 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title><g:layoutTitle default="Grails"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="shortcut icon" href="${assetPath(src: 'favicon.ico')}" type="image/x-icon">
-		<link rel="apple-touch-icon" href="${assetPath(src: 'apple-touch-icon.png')}">
-		<link rel="apple-touch-icon" sizes="114x114" href="${assetPath(src: 'apple-touch-icon-retina.png')}">
-  		<asset:stylesheet src="application.css"/>
-		<asset:javascript src="application.js"/>
+		<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+		<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-retina.png">
+		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="css/mobile.css">
+		<script type="text/javascript" src="js/application.js"></script>
 		<g:layoutHead/>
 	</head>
 	<body>
