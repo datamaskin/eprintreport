@@ -62,7 +62,7 @@ grails.project.dependency.resolution = {
         // plugins for the compile step
         compile ":scaffolding:2.1.2"
         compile ':cache:1.1.8'
-        compile ":asset-pipeline:2.1.5"
+        //compile ":asset-pipeline:2.1.5"
 
         // plugins needed at runtime but not for compilation
         runtime ":hibernate4:4.3.8.1" // or ":hibernate:3.6.10.18"
@@ -70,10 +70,10 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.11.1"
 
         // The DB rev eng tool
-        compile "org.grails.plugins:db-reverse-engineer:4.0.0"
+//        compile "org.grails.plugins:db-reverse-engineer:4.0.0"
 
 //        compile "org.grails.plugins:grails-datatables:0.9"
-        runtime "org.grails.plugins:grails-datatables:0.9"
+        compile ":grails-datatables-no-asset:0.9"
 
         runtime ':twitter-bootstrap:3.3.5'
 
